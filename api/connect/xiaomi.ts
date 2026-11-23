@@ -1,11 +1,11 @@
 import { requireAuth } from '../_lib/auth.js';
 import { HttpError, json, readJson, route } from '../_lib/http.js';
 import { store } from '../_lib/store.js';
-import { disconnectXiaomi, loadXiaomiAuth, loginXiaomi, type XiaomiRegion } from '../_lib/xiaomi-auth.js';
+import { disconnectXiaomi, loadXiaomiAuth, loginXiaomi, pollXiaomiQr, startXiaomiQr, type XiaomiRegion } from '../_lib/xiaomi-auth.js';
 
 const REGIONS: XiaomiRegion[] = ['de', 'cn', 'us', 'ru', 'sg', 'i2'];
 
-/** GET: κατάσταση · POST {username, password, region}: σύνδεση · DELETE: αποσύνδεση */
+/** GET: κατάσταση · POST {action:'qr-start'|'qr-poll'} ή {username, password, region}: σύνδεση · DELETE: αποσύνδεση */
 export const GET = route(async (req) => {
   requireAuth(req);
   const a = await loadXiaomiAuth();
@@ -14,9 +14,21 @@ export const GET = route(async (req) => {
 
 export const POST = route(async (req) => {
   requireAuth(req);
-  const { username, password, region } = await readJson<{ username?: string; password?: string; region?: XiaomiRegion }>(req, 4096);
+  const { username, password, region, action } = await readJson<{
+    username?: string;
+    password?: string;
+    region?: XiaomiRegion;
+    action?: 'qr-start' | 'qr-poll';
+  }>(req, 4096);
+  const reg = REGIONS.includes(region as XiaomiRegion) ? (region as XiaomiRegion) : 'de';
+  if (action === 'qr-start') return json(await startXiaomiQr(reg));
+  if (action === 'qr-poll') {
+    const r = await pollXiaomiQr();
+    if (r.status === 'connected') await store().del('xm:devices');
+    return json(r);
+  }
   if (typeof username !== 'string' || typeof password !== 'string') throw new HttpError(400, 'Λείπουν στοιχεία');
-  const r = await loginXiaomi(username.trim(), password, REGIONS.includes(region as XiaomiRegion) ? (region as XiaomiRegion) : 'de');
+  const r = await loginXiaomi(username.trim(), password, reg);
   if (r.status === 'connected') await store().del('xm:devices');
   return json(r);
 });

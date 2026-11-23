@@ -184,6 +184,56 @@ const REGIONS = [
 
 function XiaomiCard({ connected, error, deviceCount }: { connected: boolean; error?: string; deviceCount: number }) {
   const [open, setOpen] = useState(false);
+  const [qr, setQr] = useState<{ qr: string; loginUrl: string } | null>(null);
+  const [qrBusy, setQrBusy] = useState(false);
+
+  // Όσο είναι ανοιχτή η σύνδεση με link, ρωτάμε τον server αν ολοκληρώθηκε το login στη Xiaomi.
+  useEffect(() => {
+    if (!qr) return;
+    let alive = true;
+    (async () => {
+      while (alive) {
+        if (document.visibilityState !== 'visible') {
+          await new Promise((r) => setTimeout(r, 1000));
+          continue;
+        }
+        try {
+          const r = await api.xmQrPoll();
+          if (!alive) return;
+          if (r.status === 'connected') {
+            setQr(null);
+            toast('Το Xiaomi συνδέθηκε');
+            await refreshLights();
+            return;
+          }
+          if (r.status === 'expired') {
+            setQr(null);
+            setErr('Ο σύνδεσμος έληξε. Πάτα ξανά «Σύνδεση μέσω Xiaomi».');
+            return;
+          }
+        } catch (e) {
+          if (!alive) return;
+          setErr(e instanceof Error ? e.message : 'Σφάλμα');
+          await new Promise((r) => setTimeout(r, 3000));
+        }
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [qr]);
+
+  const startQr = async () => {
+    setErr('');
+    setQrBusy(true);
+    try {
+      setQr(await api.xmQrStart(region));
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Σφάλμα');
+    } finally {
+      setQrBusy(false);
+    }
+  };
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [region, setRegion] = useState('de');
@@ -231,11 +281,46 @@ function XiaomiCard({ connected, error, deviceCount }: { connected: boolean; err
         )}
       </div>
       {error && <p className="mt-3 text-[13px] text-[#ff8a80]">{error}</p>}
+      {err && !open && <p className="mt-3 text-[13px] text-[#ff8a80]">{err}</p>}
 
-      {!open ? (
-        <Button tone={connected ? 'default' : 'primary'} className="mt-4 w-full" onClick={() => setOpen(true)}>
-          {connected ? 'Επανασύνδεση' : 'Σύνδεση λογαριασμού Xiaomi'}
-        </Button>
+      {qr ? (
+        <div className="mt-4 space-y-3">
+          <ol className="space-y-2 text-[14px] leading-relaxed text-white/70">
+            <li>
+              <b className="text-white">1.</b> Άνοιξε τη σελίδα της Xiaomi και συνδέσου όπως στο Xiaomi Home (με την επιβεβαίωση που θα σου ζητήσει).
+            </li>
+            <li>
+              <b className="text-white">2.</b> Γύρνα εδώ — η σύνδεση ολοκληρώνεται αυτόματα.
+            </li>
+          </ol>
+          <a
+            href={qr.loginUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="grid h-12 place-items-center rounded-2xl bg-white text-[15px] font-semibold text-black active:scale-[0.98]"
+          >
+            Άνοιγμα σελίδας Xiaomi
+          </a>
+          <details className="rounded-2xl bg-white/[0.04] p-3 text-[13px] text-white/55">
+            <summary>Ή σκάναρε το QR από το Xiaomi Home σε άλλη συσκευή</summary>
+            <img src={qr.qr} alt="QR σύνδεσης Xiaomi" className="mx-auto mt-3 w-48 rounded-xl bg-white p-2" />
+          </details>
+          <div className="flex items-center justify-center gap-2 py-1 text-[13px] text-white/45">
+            <Spinner className="h-4 w-4" /> Αναμονή για σύνδεση…
+          </div>
+          <button type="button" onClick={() => setQr(null)} className="w-full py-2 text-[14px] text-white/45">
+            Ακύρωση
+          </button>
+        </div>
+      ) : !open ? (
+        <div className="mt-4 space-y-2">
+          <Button tone={connected ? 'default' : 'primary'} className="w-full" onClick={startQr} disabled={qrBusy}>
+            {qrBusy ? <Spinner /> : connected ? 'Επανασύνδεση μέσω Xiaomi' : 'Σύνδεση μέσω Xiaomi (προτείνεται)'}
+          </Button>
+          <button type="button" onClick={() => setOpen(true)} className="w-full py-2 text-[14px] text-white/45">
+            Σύνδεση με email και κωδικό
+          </button>
+        </div>
       ) : (
         <form onSubmit={submit} className="mt-4 space-y-3">
           <p className="text-[13px] leading-relaxed text-white/50">

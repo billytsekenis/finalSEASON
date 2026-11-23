@@ -48,5 +48,9 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ username, password, region }),
     }),
+  xmQrStart: (region: string) =>
+    request<{ qr: string; loginUrl: string }>('/api/connect/xiaomi', { method: 'POST', body: JSON.stringify({ action: 'qr-start', region }) }),
+  xmQrPoll: () =>
+    request<{ status: 'pending' | 'connected' | 'expired' }>('/api/connect/xiaomi', { method: 'POST', body: JSON.stringify({ action: 'qr-poll' }) }),
   xmDisconnect: () => request('/api/connect/xiaomi', { method: 'DELETE' }),
 };

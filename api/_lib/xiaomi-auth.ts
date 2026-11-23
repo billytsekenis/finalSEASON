@@ -125,6 +125,80 @@ export async function loginXiaomi(username: string, password: string, region: Xi
   return { status: 'connected' };
 }
 
+// ───────────────────────── Σύνδεση με QR / link (χωρίς κωδικό στον server) ─────────────────────────
+
+const QR_KEY = 'xm:qr';
+
+interface QrSession {
+  lp: string;
+  region: XiaomiRegion;
+  cookies: string;
+  expiresAt: number;
+}
+
+/** Ξεκινά τη σύνδεση: η Xiaomi δίνει ένα QR και ένα link όπου ο χρήστης κάνει login στη σελίδα της. */
+export async function startXiaomiQr(region: XiaomiRegion): Promise<{ qr: string; loginUrl: string }> {
+  const params = new URLSearchParams({
+    _qrsize: '480',
+    qs: '%3Fsid%3Dxiaomiio%26_json%3Dtrue',
+    callback: 'https://sts.api.io.mi.com/sts',
+    _hasLogo: 'false',
+    sid: 'xiaomiio',
+    serviceParam: '',
+    _locale: 'en_GB',
+    _dc: String(Date.now()),
+  });
+  const res = await fetch(`https://account.xiaomi.com/longPolling/loginUrl?${params}`, { headers: { 'User-Agent': UA } });
+  const data = parseXmJson<{ qr?: string; loginUrl?: string; lp?: string; timeout?: number }>(await res.text());
+  if (!data.qr || !data.loginUrl || !data.lp) throw new HttpError(502, 'Η Xiaomi δεν έδωσε σύνδεσμο σύνδεσης');
+  const cookies = res.headers
+    .getSetCookie()
+    .map((c) => c.split(';')[0])
+    .join('; ');
+  const ttl = Math.min(data.timeout ?? 300, 600);
+  const session: QrSession = { lp: data.lp, region, cookies, expiresAt: Date.now() + ttl * 1000 };
+  await store().set(QR_KEY, encrypt(JSON.stringify(session)), { ttlSec: ttl + 30 });
+  return { qr: data.qr, loginUrl: data.loginUrl };
+}
+
+/** Περιμένει (long polling) μέχρι ~20″ να ολοκληρώσει ο χρήστης το login στη σελίδα της Xiaomi. */
+export async function pollXiaomiQr(): Promise<{ status: 'pending' | 'connected' | 'expired' }> {
+  const raw = await store().get(QR_KEY);
+  if (!raw) return { status: 'expired' };
+  const s = JSON.parse(decrypt(raw)) as QrSession;
+  if (s.expiresAt < Date.now()) return { status: 'expired' };
+
+  let res: Response;
+  try {
+    res = await fetch(s.lp, { headers: { 'User-Agent': UA, ...(s.cookies ? { Cookie: s.cookies } : {}) }, signal: AbortSignal.timeout(20_000) });
+  } catch {
+    return { status: 'pending' };
+  }
+  if (res.status !== 200) return { status: 'pending' };
+  const d = parseXmJson<{ ssecurity?: string; userId?: number | string; location?: string }>(await res.text());
+  if (!d.ssecurity || !d.location || !d.userId) return { status: 'pending' };
+
+  let r3 = await fetch(d.location, { headers: { 'User-Agent': UA }, redirect: 'manual' });
+  let serviceToken = cookieValue(r3, 'serviceToken');
+  if (!serviceToken) {
+    r3 = await fetch(d.location, { headers: { 'User-Agent': UA } });
+    serviceToken = cookieValue(r3, 'serviceToken');
+  }
+  if (!serviceToken) throw new HttpError(502, 'Δεν δόθηκε serviceToken από τη Xiaomi');
+
+  const auth: XiaomiAuth = {
+    userId: String(d.userId),
+    ssecurity: d.ssecurity,
+    serviceToken,
+    region: s.region,
+    deviceId: await deviceId(),
+    connectedAt: Date.now(),
+  };
+  await store().set(AUTH_KEY, encrypt(JSON.stringify(auth)));
+  await store().del(QR_KEY);
+  return { status: 'connected' };
+}
+
 // ───────────────────────── Κρυπτογραφημένα αιτήματα (RC4), όπως η εφαρμογή Mi Home ─────────────────────────
 
 function rc4(key: Buffer, data: Buffer): Buffer {
