@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
-import type { Light, Scene } from '../../shared/types';
+import type { Group, Light, Scene } from '../../shared/types';
 import { EditIcon, GearIcon, PlusIcon, SparkIcon, WifiOffIcon } from '../components/Icons';
 import { LightCard } from '../components/LightCard';
 import { LightSheet } from '../components/LightSheet';
 import { Spinner } from '../components/ui';
-import { lightRgb, rgbCss } from '../lib/color';
+import { lightRgb, rgba, rgbCss } from '../lib/color';
 import { applyScene, sceneGradient } from '../lib/scenes';
 import { averageBrightness, refreshLights, scaleBrightness, setPower, setWhiteAll, useApp } from '../lib/store';
 import { Slider } from '../components/Slider';
@@ -209,6 +209,29 @@ export function Home({ onSettings, onEnergy }: { onSettings: () => void; onEnerg
             </div>
           </section>
 
+          {/* Ομάδες: έλεγχος όλης της ομάδας μαζί */}
+          {groups.length > 0 && (
+            <section className="relative mt-5">
+              <div className="mb-2 flex items-center justify-between px-1">
+                <h2 className="text-[15px] font-semibold tracking-tight">Ομάδες</h2>
+                <button onClick={() => setGroupEdit('new')} className="flex items-center gap-1 text-[14px] font-medium text-white/60 active:opacity-60">
+                  <PlusIcon className="h-4 w-4" /> Νέα
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {groups.map((g) => (
+                  <GroupTile
+                    key={g.id}
+                    group={g}
+                    lights={lights.filter((l) => g.lightIds.includes(l.id))}
+                    onOpen={() => setSheet({ ids: g.lightIds.filter((id) => lights.some((l) => l.id === id && l.kind !== 'plug')), title: g.name })}
+                    onEdit={() => setGroupEdit(g.id)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Φίλτρα: δωμάτια και ομάδες */}
           <div className="relative -mx-5 mt-4 flex gap-1.5 overflow-x-auto px-5 [scrollbar-width:none]">
             <Chip active={filter.kind === 'all'} onClick={() => setFilter({ kind: 'all' })}>
@@ -288,6 +311,67 @@ function MasterDimmer({ ids }: { ids: string[] }) {
         setDrag(null);
       }}
     />
+  );
+}
+
+/** Κάρτα ομάδας: on/off για όλη την ομάδα, πάτημα για κοινό έλεγχο χρώματος/έντασης. */
+function GroupTile({ group, lights, onOpen, onEdit }: { group: Group; lights: Light[]; onOpen: () => void; onEdit: () => void }) {
+  const online = lights.filter((l) => l.online);
+  const on = online.filter((l) => l.on);
+  const lit = on.length > 0;
+  const colors = [...new Set(on.map((l) => rgbCss(lightRgb(l))))].slice(0, 3);
+  const avg = on.length ? Math.round(on.reduce((s, l) => s + l.brightness, 0) / on.length) : 0;
+  const first = on[0];
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={(e) => e.key === 'Enter' && onOpen()}
+      className="relative overflow-hidden rounded-[16px] p-2.5 transition active:scale-[0.97]"
+      style={{
+        background: lit && first ? `linear-gradient(135deg, ${rgba(lightRgb(first), 0.18)}, transparent 70%), #1c1e19` : '#181a16',
+      }}
+    >
+      <div className="flex items-center gap-2.5">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setPower(lights.map((l) => l.id), !lit);
+          }}
+          disabled={!online.length}
+          aria-label={lit ? `Σβήσιμο ${group.name}` : `Άναμμα ${group.name}`}
+          className="grid h-8 w-8 shrink-0 place-items-center rounded-full transition active:scale-90 disabled:opacity-40"
+          style={{
+            background: lit ? (colors.length > 1 ? `linear-gradient(135deg, ${colors.join(', ')})` : colors[0]) : 'rgba(235,231,222,0.07)',
+            color: lit ? 'rgba(18,20,16,0.8)' : 'rgba(235,231,222,0.55)',
+          }}
+        >
+          <svg viewBox="0 0 24 24" className="h-[15px] w-[15px]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M12 3v8" /><path d="M6.3 6.8a8 8 0 1 0 11.4 0" /></svg>
+        </button>
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-[13px] font-semibold">{group.name}</div>
+          <div className="text-[11px] text-white/50 tabular-nums">
+            {!online.length ? 'Offline' : lit ? `${on.length}/${lights.length} · ${avg}%` : `Σβηστά · ${lights.length}`}
+          </div>
+        </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit();
+          }}
+          aria-label={`Επεξεργασία ${group.name}`}
+          className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-white/35 active:bg-white/10"
+        >
+          <EditIcon className="h-3 w-3" />
+        </button>
+      </div>
+      {lit && (
+        <div className="absolute inset-x-0 bottom-0 h-[2px] bg-white/[0.05]">
+          <div className="h-full transition-all duration-500" style={{ width: `${avg}%`, background: colors[0] }} />
+        </div>
+      )}
+    </div>
   );
 }
 
