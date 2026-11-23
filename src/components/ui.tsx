@@ -22,7 +22,7 @@ export function Segmented<T extends string>({
           key={o.value}
           disabled={o.disabled}
           onClick={() => onChange(o.value)}
-          className={`relative z-10 h-9 text-[14px] font-semibold transition-colors disabled:opacity-30 ${
+          className={`relative z-10 h-8 text-[13px] font-semibold transition-colors disabled:opacity-30 ${
             o.value === value ? 'text-white' : 'text-white/55'
           }`}
         >
@@ -40,11 +40,11 @@ export function Switch({ checked, onChange, label }: { checked: boolean; onChang
       aria-checked={checked}
       aria-label={label}
       onClick={() => onChange(!checked)}
-      className={`relative h-[31px] w-[51px] shrink-0 rounded-full transition-colors duration-200 ${checked ? 'bg-[#34c759]' : 'bg-white/[0.16]'}`}
+      className={`relative h-[28px] w-[46px] shrink-0 rounded-full transition-colors duration-200 ${checked ? 'bg-[#9aab7a]' : 'bg-white/[0.16]'}`}
     >
       <span
-        className="absolute top-[2px] left-[2px] h-[27px] w-[27px] rounded-full bg-white shadow-[0_3px_8px_rgba(0,0,0,0.25)] transition-transform duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]"
-        style={{ transform: checked ? 'translateX(20px)' : 'none' }}
+        className="absolute top-[2px] left-[2px] h-[24px] w-[24px] rounded-full bg-white shadow-[0_3px_8px_rgba(0,0,0,0.25)] transition-transform duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]"
+        style={{ transform: checked ? 'translateX(18px)' : 'none' }}
       />
     </button>
   );
@@ -52,7 +52,7 @@ export function Switch({ checked, onChange, label }: { checked: boolean; onChang
 
 export function Section({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
   return (
-    <section className="mt-8">
+    <section className="mt-6">
       <div className="mb-3 flex items-center justify-between px-1">
         <h3 className="text-[13px] font-semibold tracking-wider text-white/45 uppercase">{title}</h3>
         {action}
@@ -80,14 +80,14 @@ export function Button({
   const tones = {
     default: 'bg-white/[0.09] text-white',
     primary: 'bg-white text-black',
-    danger: 'bg-[#ff453a]/15 text-[#ff6961]',
+    danger: 'bg-[#d4735a]/15 text-[#e08a73]',
   };
   return (
     <button
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={`h-12 rounded-2xl px-5 text-[15px] font-semibold transition active:scale-[0.97] disabled:opacity-40 ${tones[tone]} ${className}`}
+      className={`h-11 rounded-2xl px-5 text-[14px] font-semibold transition active:scale-[0.97] disabled:opacity-40 ${tones[tone]} ${className}`}
     >
       {children}
     </button>
@@ -103,7 +103,7 @@ export function ToastHost() {
           key={t.id}
           role="status"
           className={`animate-toast flex max-w-md items-center rounded-2xl px-4 py-3 text-center text-[14px] font-medium shadow-[0_10px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl ${
-            t.tone === 'error' ? 'bg-[#3a1614]/90 text-[#ffb4ae]' : 'bg-[#2a2a2e]/90 text-white'
+            t.tone === 'error' ? 'bg-[#3b2219]/90 text-[#f0b8a6]' : 'bg-[#2f2720]/90 text-white'
           }`}
         >
           <span>{t.message}</span>

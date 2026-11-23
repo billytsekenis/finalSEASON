@@ -18,7 +18,7 @@ export function Settings({ onBack }: { onBack: () => void }) {
         <button onClick={onBack} className="-ml-2 grid h-11 w-11 place-items-center rounded-full text-white/80 active:bg-white/10" aria-label="Πίσω">
           <BackIcon className="h-6 w-6" />
         </button>
-        <h1 className="text-[28px] font-bold tracking-tight">Ρυθμίσεις</h1>
+        <h1 className="text-[24px] font-bold tracking-tight">Ρυθμίσεις</h1>
       </header>
 
       <Section title="Συνδέσεις">
@@ -103,19 +103,19 @@ function SmartThingsCard({ connected, error, deviceCount }: { connected: boolean
           </div>
         </div>
         {connected && (
-          <span className="flex items-center gap-1 rounded-full bg-[#34c759]/15 px-3 py-1 text-[12px] font-semibold text-[#5ee07f]">
+          <span className="flex items-center gap-1 rounded-full bg-[#9aab7a]/15 px-3 py-1 text-[12px] font-semibold text-[#b5c494]">
             <CheckIcon className="h-3.5 w-3.5" /> Ενεργό
           </span>
         )}
       </div>
 
       {isPat && status?.expiresAt && (
-        <p className="mt-3 rounded-xl bg-[#ff9f0a]/10 px-3 py-2 text-[13px] text-[#ffd18a]">
+        <p className="mt-3 rounded-xl bg-[#c98a4b]/10 px-3 py-2 text-[13px] text-[#e8c79a]">
           Το προσωρινό token λήγει {new Date(status.expiresAt).toLocaleString('el-GR', { weekday: 'short', hour: '2-digit', minute: '2-digit' })}. Κάνε
           μόνιμη σύνδεση παρακάτω.
         </p>
       )}
-      {error && !connected && <p className="mt-3 text-[13px] text-[#ff8a80]">{error}</p>}
+      {error && !connected && <p className="mt-3 text-[13px] text-[#e8957f]">{error}</p>}
 
       {step === 'idle' ? (
         <Button tone={connected && !isPat ? 'default' : 'primary'} className="mt-4 w-full" onClick={start} disabled={busy}>
@@ -168,7 +168,7 @@ function SmartThingsCard({ connected, error, deviceCount }: { connected: boolean
           </button>
         </div>
       )}
-      {err && <p className="mt-3 text-[13px] text-[#ff8a80]">{err}</p>}
+      {err && <p className="mt-3 text-[13px] text-[#e8957f]">{err}</p>}
     </div>
   );
 }
@@ -275,13 +275,13 @@ function XiaomiCard({ connected, error, deviceCount }: { connected: boolean; err
           <div className="mt-0.5 text-[14px] text-white/45">{connected ? `${deviceCount} λάμπες` : 'Δεν έχει συνδεθεί'}</div>
         </div>
         {connected && (
-          <span className="flex items-center gap-1 rounded-full bg-[#34c759]/15 px-3 py-1 text-[12px] font-semibold text-[#5ee07f]">
+          <span className="flex items-center gap-1 rounded-full bg-[#9aab7a]/15 px-3 py-1 text-[12px] font-semibold text-[#b5c494]">
             <CheckIcon className="h-3.5 w-3.5" /> Ενεργό
           </span>
         )}
       </div>
-      {error && <p className="mt-3 text-[13px] text-[#ff8a80]">{error}</p>}
-      {err && !open && <p className="mt-3 text-[13px] text-[#ff8a80]">{err}</p>}
+      {error && <p className="mt-3 text-[13px] text-[#e8957f]">{error}</p>}
+      {err && !open && <p className="mt-3 text-[13px] text-[#e8957f]">{err}</p>}
 
       {qr ? (
         <div className="mt-4 space-y-3">
@@ -336,7 +336,7 @@ function XiaomiCard({ connected, error, deviceCount }: { connected: boolean; err
             ))}
           </select>
           {verifyUrl && (
-            <div className="space-y-2 rounded-2xl bg-[#ff9f0a]/10 p-4 text-[14px] text-[#ffd18a]">
+            <div className="space-y-2 rounded-2xl bg-[#c98a4b]/10 p-4 text-[14px] text-[#e8c79a]">
               <p>Η Xiaomi ζητά επιβεβαίωση ταυτότητας (κωδικός σε email ή SMS).</p>
               <a href={verifyUrl} target="_blank" rel="noopener noreferrer" className="block rounded-xl bg-white py-3 text-center font-semibold text-black">
                 1. Επιβεβαίωση στη Xiaomi
@@ -350,7 +350,7 @@ function XiaomiCard({ connected, error, deviceCount }: { connected: boolean; err
           <button type="button" onClick={() => setOpen(false)} className="w-full py-2 text-[14px] text-white/45">
             Ακύρωση
           </button>
-          {err && <p className="text-[13px] text-[#ff8a80]">{err}</p>}
+          {err && <p className="text-[13px] text-[#e8957f]">{err}</p>}
         </form>
       )}
     </div>

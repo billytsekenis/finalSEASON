@@ -1,8 +1,14 @@
 @import 'tailwindcss';
 
+/* Γήινη παλέτα: κρεμ αντί για λευκό, espresso αντί για μαύρο */
+@theme {
+  --color-white: #f3eadd;
+  --color-black: #1c1611;
+}
+
 :root {
   color-scheme: dark;
-  --bg: #000;
+  --bg: #191410;
 }
 
 html {
@@ -15,7 +21,7 @@ body {
   margin: 0;
   min-height: 100dvh;
   background: var(--bg);
-  color: #fff;
+  color: #f3eadd;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;

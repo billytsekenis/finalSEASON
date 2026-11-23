@@ -76,7 +76,7 @@ export function ColorWheel({ hue, saturation, onChange, onCommit, size, disabled
         style={{
           background:
             'radial-gradient(circle closest-side, #fff 0%, rgba(255,255,255,0) 100%), conic-gradient(from 0deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)',
-          boxShadow: `0 0 80px -10px ${color}88, inset 0 0 0 1px rgba(255,255,255,0.08)`,
+          boxShadow: `0 0 80px -10px ${color}88, inset 0 0 0 1px rgba(243,234,221,0.07)`,
           transition: 'box-shadow 300ms ease',
         }}
       />

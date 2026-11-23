@@ -3,13 +3,13 @@ import { hsvToRgb, kelvinToRgb, rgbCss } from './color';
 import { offerUndo, runActions, snapshot, toast } from './store';
 
 export function entryColor(e: SceneEntry): string {
-  if (!e.on) return 'rgb(40,40,44)';
+  if (!e.on) return 'rgb(52,44,37)';
   return rgbCss(e.mode === 'white' ? kelvinToRgb(e.colorTemp ?? 3000) : hsvToRgb({ h: e.hue, s: e.saturation, v: 100 }));
 }
 
 export function sceneGradient(scene: Pick<Scene, 'entries'>): string {
   const colors = [...new Set(scene.entries.filter((e) => e.on).map(entryColor))].slice(0, 5);
-  if (!colors.length) return 'linear-gradient(135deg, #2a2a2e, #18181b)';
+  if (!colors.length) return 'linear-gradient(135deg, #2f2720, #201a15)';
   if (colors.length === 1) return `linear-gradient(135deg, ${colors[0]}, ${colors[0]}88)`;
   return `linear-gradient(135deg, ${colors.join(', ')})`;
 }

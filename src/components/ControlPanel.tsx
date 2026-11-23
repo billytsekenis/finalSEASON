@@ -34,7 +34,7 @@ const WHITE_PRESETS = [
 ];
 
 function useWheelSize() {
-  const calc = () => Math.min(300, Math.max(220, (typeof window === 'undefined' ? 360 : window.innerWidth) - 96));
+  const calc = () => Math.min(260, Math.max(200, (typeof window === 'undefined' ? 360 : window.innerWidth) - 96));
   const [size, setSize] = useState(calc);
   useEffect(() => {
     const on = () => setSize(calc());
@@ -105,7 +105,7 @@ export function ControlPanel({ state, caps, onChange, disabled }: Props) {
   }
 
   return (
-    <div className="space-y-6 pb-4">
+    <div className="space-y-5 pb-4">
       {caps.color && caps.colorTemp && (
         <Segmented
           value={tab}
@@ -159,7 +159,7 @@ export function ControlPanel({ state, caps, onChange, disabled }: Props) {
             leading={
               <button
                 onClick={toggleFav}
-                className={`grid h-11 w-11 shrink-0 place-items-center rounded-full border border-dashed transition active:scale-90 ${
+                className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border border-dashed transition active:scale-90 ${
                   isFav ? 'border-white/60 text-white' : 'border-white/25 text-white/60'
                 }`}
                 aria-label={isFav ? 'Αφαίρεση από αγαπημένα' : 'Αποθήκευση στα αγαπημένα'}
@@ -175,9 +175,9 @@ export function ControlPanel({ state, caps, onChange, disabled }: Props) {
         <>
           <div className="flex justify-center py-3">
             <div
-              className="h-40 w-40 rounded-full transition-[background,box-shadow] duration-300"
+              className="h-32 w-32 rounded-full transition-[background,box-shadow] duration-300"
               style={{
-                background: `radial-gradient(circle at 50% 40%, #fff 0%, ${rgbCss(kelvinToRgb(ct))} 70%)`,
+                background: `radial-gradient(circle at 50% 40%, #fff6ea 0%, ${rgbCss(kelvinToRgb(ct))} 70%)`,
                 boxShadow: `0 0 90px -5px ${rgbCss(kelvinToRgb(ct))}`,
                 opacity: 0.35 + (state.brightness / 100) * 0.65,
               }}
@@ -202,7 +202,7 @@ export function ControlPanel({ state, caps, onChange, disabled }: Props) {
               <button
                 key={p.k}
                 onClick={() => onChange({ colorTemp: p.k }, true)}
-                className={`flex h-14 flex-col items-center justify-center rounded-2xl border transition active:scale-95 ${
+                className={`flex h-12 flex-col items-center justify-center rounded-xl border transition active:scale-95 ${
                   state.mode === 'white' && Math.abs(ct - p.k) < 60 ? 'border-white/50 bg-white/10' : 'border-white/[0.06] bg-white/[0.04]'
                 }`}
               >
@@ -244,7 +244,7 @@ function Swatches({
             key={c}
             onClick={() => onPick(c)}
             aria-label={`Χρώμα ${c}`}
-            className={`h-11 w-11 shrink-0 rounded-full transition active:scale-90 ${c === current ? 'ring-2 ring-white ring-offset-2 ring-offset-[#121214]' : ''}`}
+            className={`h-9 w-9 shrink-0 rounded-full transition active:scale-90 ${c === current ? 'ring-2 ring-white ring-offset-2 ring-offset-[#211b16]' : ''}`}
             style={{ background: c, boxShadow: `0 4px 14px ${c}55` }}
           />
         ))}
@@ -304,7 +304,7 @@ function ColorValues({
     }
   };
 
-  const input = 'h-12 w-full rounded-xl bg-white/[0.06] px-3 text-center text-[16px] font-medium tabular-nums outline-none focus:bg-white/[0.1] focus:ring-1 focus:ring-white/30';
+  const input = 'h-11 w-full rounded-xl bg-white/[0.06] px-3 text-center text-[16px] font-medium tabular-nums outline-none focus:bg-white/[0.1] focus:ring-1 focus:ring-white/30';
 
   return (
     <div className="rounded-[22px] bg-white/[0.04] p-4">
@@ -348,7 +348,7 @@ function ColorValues({
             spellCheck={false}
             enterKeyHint="done"
             aria-label="HEX"
-            className={`${input} font-mono tracking-wider ${bad ? 'ring-1 ring-[#ff453a]' : ''}`}
+            className={`${input} font-mono tracking-wider ${bad ? 'ring-1 ring-[#d4735a]' : ''}`}
           />
         )}
         {mode !== 'hex' &&
@@ -373,7 +373,7 @@ function ColorValues({
           ))}
         <button type="submit" className="hidden" />
       </form>
-      {bad && <p className="mt-2 text-[13px] text-[#ff6961]">Μη έγκυρο HEX — π.χ. #FF7A00</p>}
+      {bad && <p className="mt-2 text-[13px] text-[#e08a73]">Μη έγκυρο HEX — π.χ. #FF7A00</p>}
     </div>
   );
 }

@@ -20,10 +20,10 @@ export function LightCard({ light, onOpen }: { light: Light; onOpen: () => void 
       tabIndex={0}
       onClick={onOpen}
       onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onOpen()}
-      className="group relative flex aspect-[1/0.92] flex-col justify-between overflow-hidden rounded-[26px] border p-4 text-left transition-[transform,border-color,background-color] duration-300 active:scale-[0.97]"
+      className="group relative flex aspect-[1/0.78] flex-col justify-between overflow-hidden rounded-[22px] border p-3.5 text-left transition-[transform,border-color,background-color] duration-300 active:scale-[0.97]"
       style={{
-        background: lit ? `radial-gradient(120% 90% at 20% 0%, ${rgba(rgb, glowAlpha)}, transparent 70%), #17171a` : '#141416',
-        borderColor: lit ? rgba(rgb, 0.28) : 'rgba(255,255,255,0.06)',
+        background: lit ? `radial-gradient(120% 90% at 20% 0%, ${rgba(rgb, glowAlpha)}, transparent 70%), #261f19` : '#221c17',
+        borderColor: lit ? rgba(rgb, 0.28) : 'rgba(243,234,221,0.06)',
       }}
     >
       <div className="flex items-start justify-between">
@@ -34,33 +34,33 @@ export function LightCard({ light, onOpen }: { light: Light; onOpen: () => void 
           }}
           disabled={!light.online}
           aria-label={light.on ? `Σβήσιμο ${light.name}` : `Άναμμα ${light.name}`}
-          className="grid h-12 w-12 place-items-center rounded-full transition-all duration-300 active:scale-90 disabled:opacity-40"
+          className="grid h-10 w-10 place-items-center rounded-full transition-all duration-300 active:scale-90 disabled:opacity-40"
           style={{
-            background: lit ? rgbCss(rgb) : 'rgba(255,255,255,0.08)',
-            color: lit ? 'rgba(0,0,0,0.72)' : 'rgba(255,255,255,0.6)',
+            background: lit ? rgbCss(rgb) : 'rgba(243,234,221,0.07)',
+            color: lit ? 'rgba(28,22,17,0.75)' : 'rgba(243,234,221,0.6)',
             boxShadow: lit ? `0 0 28px ${rgba(rgb, 0.55)}` : 'none',
           }}
         >
-          {lit ? <KindIcon kind={light.kind} className="h-6 w-6" /> : <PowerIcon className="h-[22px] w-[22px]" />}
+          {lit ? <KindIcon kind={light.kind} className="h-5 w-5" /> : <PowerIcon className="h-[18px] w-[18px]" />}
         </button>
         <span
-          className={`mt-1 h-2 w-2 rounded-full ${light.online ? 'bg-[#34c759]' : 'bg-[#ff453a]'}`}
+          className={`mt-1 h-2 w-2 rounded-full ${light.online ? 'bg-[#9aab7a]' : 'bg-[#d4735a]'}`}
           title={light.online ? 'Συνδεδεμένη' : 'Εκτός σύνδεσης'}
         />
       </div>
       <div>
-        <div className="truncate text-[16px] leading-tight font-semibold">{light.name}</div>
-        <div className="mt-0.5 truncate text-[13px] text-white/45">
+        <div className="truncate text-[15px] leading-tight font-semibold">{light.name}</div>
+        <div className="mt-0.5 truncate text-[12px] text-white/45">
           {light.brand} · {KIND_LABEL[light.kind]}
         </div>
-        <div className="mt-2.5 flex items-center gap-2">
+        <div className="mt-2 flex items-center gap-2">
           <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/[0.08]">
             <div
               className="h-full rounded-full transition-all duration-500"
               style={{ width: lit ? `${level}%` : '0%', background: rgbCss(rgb) }}
             />
           </div>
-          <span className={`text-[12px] font-medium tabular-nums ${light.online ? 'text-white/60' : 'text-[#ff6961]'}`}>{status}</span>
+          <span className={`text-[11px] font-medium tabular-nums ${light.online ? 'text-white/60' : 'text-[#e08a73]'}`}>{status}</span>
         </div>
       </div>
     </div>

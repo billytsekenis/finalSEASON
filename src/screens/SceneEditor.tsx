@@ -169,7 +169,7 @@ export function SceneEditor({ scene, onClose }: { scene: Scene | 'new' | null; o
                     >
                       <span
                         className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-black/70"
-                        style={{ background: e ? entryColor(e) : 'rgba(255,255,255,0.06)', boxShadow: e?.on ? `0 0 18px ${entryColor(e)}` : 'none' }}
+                        style={{ background: e ? entryColor(e) : 'rgba(243,234,221,0.06)', boxShadow: e?.on ? `0 0 18px ${entryColor(e)}` : 'none' }}
                       >
                         <KindIcon kind={l.kind} className={`h-5 w-5 ${e?.on ? '' : 'text-white/50'}`} />
                       </span>

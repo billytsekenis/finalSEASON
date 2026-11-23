@@ -67,9 +67,9 @@ export function Home({ onSettings, onEnergy }: { onSettings: () => void; onEnerg
 
       <header className="relative flex items-start justify-between pt-3">
         <div>
-          <p className="text-[15px] font-medium text-white/45">{greeting()}</p>
-          <h1 className="mt-0.5 text-[34px] leading-tight font-bold tracking-tight">Φώτα</h1>
-          <p className="mt-1 text-[15px] text-white/55">
+          <p className="text-[13px] font-medium text-white/45">{greeting()}</p>
+          <h1 className="mt-0.5 text-[28px] leading-tight font-bold tracking-tight">Φώτα</h1>
+          <p className="mt-0.5 text-[14px] text-white/55">
             {loaded ? (onCount ? `${onCount} από ${lights.length} αναμμένα` : lights.length ? 'Όλα σβηστά' : ' ') : 'Φόρτωση…'}
           </p>
         </div>
@@ -80,22 +80,22 @@ export function Home({ onSettings, onEnergy }: { onSettings: () => void; onEnerg
               await refreshLights();
               setRefreshing(false);
             }}
-            className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-white/70 active:scale-95"
+            className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08] text-white/70 active:scale-95"
             aria-label="Ανανέωση"
           >
             {refreshing ? <Spinner className="h-4 w-4" /> : <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" /></svg>}
           </button>
-          <button onClick={onEnergy} className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-white/70 active:scale-95" aria-label="Ενέργεια">
+          <button onClick={onEnergy} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08] text-white/70 active:scale-95" aria-label="Ενέργεια">
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" /></svg>
           </button>
-          <button onClick={onSettings} className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-white/70 active:scale-95" aria-label="Ρυθμίσεις">
+          <button onClick={onSettings} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08] text-white/70 active:scale-95" aria-label="Ρυθμίσεις">
             <GearIcon className="h-5 w-5" />
           </button>
         </div>
       </header>
 
       {(error || stale || providerError) && (
-        <div className="relative mt-5 flex items-start gap-3 rounded-2xl bg-[#ff9f0a]/10 px-4 py-3 text-[14px] text-[#ffd18a]">
+        <div className="relative mt-5 flex items-start gap-3 rounded-2xl bg-[#c98a4b]/10 px-4 py-3 text-[14px] text-[#e8c79a]">
           <WifiOffIcon className="mt-0.5 h-5 w-5 shrink-0" />
           <span>{error ?? providerError ?? 'Το SmartThings περιόρισε προσωρινά τα αιτήματα — εμφανίζεται η τελευταία γνωστή κατάσταση.'}</span>
         </div>
@@ -112,7 +112,7 @@ export function Home({ onSettings, onEnergy }: { onSettings: () => void; onEnerg
           <p className="mx-auto mt-2 max-w-sm text-[15px] text-white/55">
             Χρειάζεται μία φορά σύνδεση με το SmartThings, όπου είναι ήδη οι λάμπες Tapo.
           </p>
-          <button onClick={onEnergy} className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-white/70 active:scale-95" aria-label="Ενέργεια">
+          <button onClick={onEnergy} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08] text-white/70 active:scale-95" aria-label="Ενέργεια">
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" /></svg>
           </button>
           <button onClick={onSettings} className="mt-6 h-12 rounded-2xl bg-white px-6 text-[15px] font-semibold text-black active:scale-95">
@@ -122,40 +122,40 @@ export function Home({ onSettings, onEnergy }: { onSettings: () => void; onEnerg
       ) : (
         <>
           {/* Συνολικός έλεγχος */}
-          <section className="relative mt-6 rounded-[26px] border border-white/[0.06] bg-[#141416]/90 p-3 backdrop-blur-xl">
+          <section className="relative mt-5 rounded-[22px] border border-white/[0.06] bg-[#221c17]/90 p-2.5 backdrop-blur-xl">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setPower(visible.map((l) => l.id), visibleOn.length === 0)}
-                className="flex h-14 flex-1 items-center gap-3 rounded-[20px] px-3 text-left transition active:scale-[0.98]"
+                className="flex h-12 flex-1 items-center gap-3 rounded-[18px] px-2 text-left transition active:scale-[0.98]"
               >
                 <span
-                  className="grid h-10 w-10 place-items-center rounded-full text-[18px] transition-all"
-                  style={{ background: visibleOn.length ? '#fff' : 'rgba(255,255,255,0.1)', color: visibleOn.length ? '#000' : '#fff' }}
+                  className="grid h-9 w-9 place-items-center rounded-full text-[16px] transition-all"
+                  style={{ background: visibleOn.length ? '#f3eadd' : 'rgba(243,234,221,0.1)', color: visibleOn.length ? '#1c1611' : '#f3eadd' }}
                 >
                   <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M12 3v8" /><path d="M6.3 6.8a8 8 0 1 0 11.4 0" /></svg>
                 </span>
                 <span>
-                  <span className="block text-[16px] font-semibold">{filterTitle}</span>
-                  <span className="block text-[13px] text-white/50">{visibleOn.length ? `${visibleOn.length} αναμμένα` : 'Πάτα για άναμμα'}</span>
+                  <span className="block text-[15px] font-semibold">{filterTitle}</span>
+                  <span className="block text-[12px] text-white/50">{visibleOn.length ? `${visibleOn.length} αναμμένα` : 'Πάτα για άναμμα'}</span>
                 </span>
               </button>
               <button
                 onClick={() => setSheet({ ids: visible.filter((l) => l.kind !== 'plug').map((l) => l.id), title: filterTitle })}
-                className="h-14 rounded-[20px] px-5 text-[15px] font-semibold text-black transition active:scale-95"
-                style={{ background: 'conic-gradient(from 200deg, #ff6b6b, #ffd93d, #6bff95, #6bd5ff, #b06bff, #ff6b6b)' }}
+                className="h-11 rounded-[16px] px-4 text-[14px] font-semibold text-black transition active:scale-95"
+                style={{ background: 'conic-gradient(from 200deg, #d98b6a, #e3b87a, #a9b98a, #8fb3b0, #a893b8, #d98b6a)' }}
               >
                 Χρώμα
               </button>
             </div>
             {visibleOn.some((l) => l.caps.brightness) && (
-              <div className="mt-3 space-y-3 px-1 pb-1">
+              <div className="mt-2 space-y-2.5 px-1 pb-1">
                 <MasterDimmer ids={visible.map((l) => l.id)} />
                 <div className="grid grid-cols-4 gap-2">
                   {WHITES.map((w) => (
                     <button
                       key={w.k}
                       onClick={() => setWhiteAll(visible.map((l) => l.id), w.k, w.label)}
-                      className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-white/[0.05] text-[13px] font-medium text-white/80 transition active:scale-95"
+                      className="flex h-9 items-center justify-center gap-1.5 rounded-xl bg-white/[0.05] text-[12px] font-medium text-white/80 transition active:scale-95"
                     >
                       <span className="h-2.5 w-2.5 rounded-full" style={{ background: w.color }} />
                       {w.label}
@@ -167,18 +167,18 @@ export function Home({ onSettings, onEnergy }: { onSettings: () => void; onEnerg
           </section>
 
           {/* Σκηνές */}
-          <section className="relative mt-8">
+          <section className="relative mt-6">
             <div className="mb-3 flex items-center justify-between px-1">
-              <h2 className="text-[20px] font-semibold tracking-tight">Σκηνές</h2>
-              <button onClick={() => setSceneEdit('new')} className="flex items-center gap-1 text-[15px] font-medium text-white/60 active:opacity-60">
+              <h2 className="text-[17px] font-semibold tracking-tight">Σκηνές</h2>
+              <button onClick={() => setSceneEdit('new')} className="flex items-center gap-1 text-[14px] font-medium text-white/60 active:opacity-60">
                 <PlusIcon className="h-4 w-4" /> Νέα
               </button>
             </div>
-            <div className="-mx-5 flex gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none]">
+            <div className="-mx-5 flex gap-2.5 overflow-x-auto px-5 pb-2 [scrollbar-width:none]">
               {scenes.length === 0 && (
                 <button
                   onClick={() => setSceneEdit('new')}
-                  className="flex h-[104px] w-full items-center justify-center rounded-[22px] border border-dashed border-white/15 text-[15px] text-white/50"
+                  className="flex h-[84px] w-full items-center justify-center rounded-[18px] border border-dashed border-white/15 text-[15px] text-white/50"
                 >
                   Δημιούργησε την πρώτη σου σκηνή
                 </button>
@@ -187,19 +187,19 @@ export function Home({ onSettings, onEnergy }: { onSettings: () => void; onEnerg
                 <div key={s.id} className="relative shrink-0">
                   <button
                     onClick={() => applyScene(s, lights)}
-                    className="flex h-[104px] w-[150px] flex-col justify-end overflow-hidden rounded-[22px] p-3.5 text-left shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition active:scale-95"
+                    className="flex h-[84px] w-[128px] flex-col justify-end overflow-hidden rounded-[18px] p-3 text-left shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition active:scale-95"
                     style={{ background: sceneGradient(s) }}
                   >
                     <span className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
-                    <span className="relative text-[15px] leading-tight font-semibold drop-shadow">{s.name}</span>
-                    <span className="relative text-[12px] text-white/75">{s.entries.length} λάμπες</span>
+                    <span className="relative text-[14px] leading-tight font-semibold drop-shadow">{s.name}</span>
+                    <span className="relative text-[11px] text-white/75">{s.entries.length} λάμπες</span>
                   </button>
                   <button
                     onClick={() => setSceneEdit(s)}
-                    className="absolute top-2 right-2 grid h-8 w-8 place-items-center rounded-full bg-black/30 text-white/85 backdrop-blur active:scale-90"
+                    className="absolute top-1.5 right-1.5 grid h-7 w-7 place-items-center rounded-full bg-black/30 text-white/85 backdrop-blur active:scale-90"
                     aria-label={`Επεξεργασία ${s.name}`}
                   >
-                    <EditIcon className="h-4 w-4" />
+                    <EditIcon className="h-3.5 w-3.5" />
                   </button>
                 </div>
               ))}
@@ -207,7 +207,7 @@ export function Home({ onSettings, onEnergy }: { onSettings: () => void; onEnerg
           </section>
 
           {/* Φίλτρα: δωμάτια και ομάδες */}
-          <div className="relative -mx-5 mt-7 flex gap-2 overflow-x-auto px-5 [scrollbar-width:none]">
+          <div className="relative -mx-5 mt-5 flex gap-2 overflow-x-auto px-5 [scrollbar-width:none]">
             <Chip active={filter.kind === 'all'} onClick={() => setFilter({ kind: 'all' })}>
               Όλα
             </Chip>
@@ -233,7 +233,7 @@ export function Home({ onSettings, onEnergy }: { onSettings: () => void; onEnerg
           {filter.kind === 'group' && <p className="relative mt-2 px-1 text-[12px] text-white/35">Πάτα ξανά την ομάδα για επεξεργασία</p>}
 
           {/* Λάμπες */}
-          <section className="relative mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <section className="relative mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
             {visible.map((l) => (
               <LightCard key={l.id} light={l} onOpen={() => setSheet({ ids: [l.id] })} />
             ))}
@@ -275,7 +275,7 @@ function MasterDimmer({ ids }: { ids: string[] }) {
       max={100}
       format={(v) => `${Math.round(v)}%`}
       icon={<SunIcon className="h-5 w-5" />}
-      fillColor="rgba(255,255,255,0.88)"
+      fillColor="rgba(243,234,221,0.88)"
       onChange={(v) => {
         setDrag(v);
         scaleBrightness(ids, v, false);
@@ -292,7 +292,7 @@ function Chip({ active, onClick, children }: { active?: boolean; onClick: () => 
   return (
     <button
       onClick={onClick}
-      className={`flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold transition active:scale-95 ${
+      className={`flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-[13px] font-semibold transition active:scale-95 ${
         active ? 'bg-white text-black' : 'bg-white/[0.08] text-white/75'
       }`}
     >

@@ -68,7 +68,7 @@ export function Sheet({ open, onClose, children, glow, title, subtitle, headerRi
         onClick={onClose}
       />
       <div
-        className="absolute inset-x-0 bottom-0 mx-auto flex max-h-[94dvh] max-w-xl flex-col overflow-hidden rounded-t-[32px] border-t border-white/[0.07] bg-[#121214] shadow-[0_-20px_60px_rgba(0,0,0,0.6)]"
+        className="absolute inset-x-0 bottom-0 mx-auto flex max-h-[94dvh] max-w-xl flex-col overflow-hidden rounded-t-[28px] border-t border-white/[0.07] bg-[#211b16] shadow-[0_-20px_60px_rgba(0,0,0,0.6)]"
         style={{
           transform: visible ? `translateY(${dragY}px)` : 'translateY(100%)',
           transition: start.current != null ? 'none' : 'transform 340ms cubic-bezier(0.32, 0.72, 0, 1)',
@@ -90,14 +90,14 @@ export function Sheet({ open, onClose, children, glow, title, subtitle, headerRi
           <div className="mx-auto mb-3 h-[5px] w-10 rounded-full bg-white/25" />
           <div className="flex items-center gap-3">
             <div className="min-w-0 flex-1">
-              {title && <h2 className="truncate text-[22px] font-semibold tracking-tight">{title}</h2>}
-              {subtitle && <p className="truncate text-[14px] text-white/50">{subtitle}</p>}
+              {title && <h2 className="truncate text-[19px] font-semibold tracking-tight">{title}</h2>}
+              {subtitle && <p className="truncate text-[13px] text-white/50">{subtitle}</p>}
             </div>
             <div onPointerDown={(e) => e.stopPropagation()} className="flex items-center gap-2">
               {headerRight}
               <button
                 onClick={onClose}
-                className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-white/70 active:scale-95"
+                className="grid h-8 w-8 place-items-center rounded-full bg-white/10 text-white/70 active:scale-95"
                 aria-label="Κλείσιμο"
               >
                 <CloseIcon className="h-[18px] w-[18px]" />

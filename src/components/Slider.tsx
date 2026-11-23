@@ -28,7 +28,7 @@ export function Slider({
   onCommit,
   variant = 'fill',
   track,
-  fillColor = 'rgba(255,255,255,0.92)',
+  fillColor = 'rgba(243,234,221,0.92)',
   label,
   icon,
   format = (v) => `${Math.round(v)}`,
@@ -79,7 +79,7 @@ export function Slider({
 
   return (
     <div className={disabled ? 'opacity-40' : ''}>
-      <div className="mb-2 flex items-baseline justify-between px-1 text-[13px]">
+      <div className="mb-1.5 flex items-baseline justify-between px-1 text-[12px]">
         <span className="font-medium tracking-wide text-white/55 uppercase">{label}</span>
         <span className="font-semibold tabular-nums text-white/90">{format(value)}</span>
       </div>
@@ -96,10 +96,10 @@ export function Slider({
         onPointerUp={onUp}
         onPointerCancel={onUp}
         onKeyDown={onKey}
-        className={`relative h-14 touch-none overflow-hidden rounded-[18px] select-none transition-transform duration-200 ${
+        className={`relative h-11 touch-none overflow-hidden rounded-[14px] select-none transition-transform duration-200 ${
           dragging ? 'scale-[1.015]' : ''
         }`}
-        style={{ background: track ?? 'rgba(255,255,255,0.08)' }}
+        style={{ background: track ?? 'rgba(243,234,221,0.07)' }}
       >
         {variant === 'fill' && (
           <div
@@ -108,15 +108,15 @@ export function Slider({
           />
         )}
         {icon && variant === 'fill' && (
-          <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-black/55 mix-blend-difference">
+          <div className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-black/55 mix-blend-difference">
             <span className="text-white/80">{icon}</span>
           </div>
         )}
         {variant === 'thumb' && (
           <div
-            className="pointer-events-none absolute top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-white shadow-[0_2px_10px_rgba(0,0,0,0.45)]"
+            className="pointer-events-none absolute top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-white shadow-[0_2px_10px_rgba(0,0,0,0.45)]"
             style={{
-              left: `clamp(22px, ${pct}%, calc(100% - 22px))`,
+              left: `clamp(18px, ${pct}%, calc(100% - 18px))`,
               background: fillColor,
               transition: dragging ? 'none' : 'left 180ms ease',
             }}

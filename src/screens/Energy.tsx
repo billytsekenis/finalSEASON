@@ -5,7 +5,7 @@ import { Section, Spinner } from '../components/ui';
 import { api } from '../lib/api';
 import { updateData, useApp } from '../lib/store';
 
-const AMBER = '#ffb340';
+const AMBER = '#d4a06a';
 const fmtKwh = (v: number) => (v < 1 ? `${Math.round(v * 1000)} Wh` : `${v.toFixed(v < 10 ? 2 : 1)} kWh`);
 const fmtEur = (v: number) => `${v < 1 ? v.toFixed(2) : v.toFixed(2)} €`;
 const fmtW = (v: number) => `${v < 10 ? v.toFixed(1) : Math.round(v)} W`;
@@ -40,10 +40,10 @@ export function Energy({ onBack }: { onBack: () => void }) {
         <button onClick={onBack} className="-ml-2 grid h-11 w-11 place-items-center rounded-full text-white/80 active:bg-white/10" aria-label="Πίσω">
           <BackIcon className="h-6 w-6" />
         </button>
-        <h1 className="text-[28px] font-bold tracking-tight">Ενέργεια</h1>
+        <h1 className="text-[24px] font-bold tracking-tight">Ενέργεια</h1>
       </header>
 
-      {error && <p className="mt-4 rounded-2xl bg-[#ff453a]/10 px-4 py-3 text-[14px] text-[#ff8a80]">{error}</p>}
+      {error && <p className="mt-4 rounded-2xl bg-[#d4735a]/10 px-4 py-3 text-[14px] text-[#e8957f]">{error}</p>}
       {!data && !error && (
         <div className="grid place-items-center py-32">
           <Spinner className="h-8 w-8" />
@@ -53,9 +53,9 @@ export function Energy({ onBack }: { onBack: () => void }) {
       {data && (
         <>
           {/* Hero: τρέχουσα ισχύς */}
-          <section className="mt-6 rounded-[28px] border border-white/[0.06] bg-[#141416] p-6">
+          <section className="mt-5 rounded-[24px] border border-white/[0.06] bg-[#221c17] p-5">
             <p className="text-[13px] font-semibold tracking-wider text-white/45 uppercase">Τώρα</p>
-            <p className="mt-1 text-[52px] leading-none font-bold tracking-tight tabular-nums">
+            <p className="mt-1 text-[42px] leading-none font-bold tracking-tight tabular-nums">
               {fmtW(totalW)}
             </p>
             <p className="mt-2 text-[14px] text-white/50">
