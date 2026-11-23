@@ -68,7 +68,7 @@ export function Sheet({ open, onClose, children, glow, title, subtitle, headerRi
         onClick={onClose}
       />
       <div
-        className="absolute inset-x-0 bottom-0 mx-auto flex max-h-[94dvh] max-w-xl flex-col overflow-hidden rounded-t-[28px] border-t border-white/[0.07] bg-[#211b16] shadow-[0_-20px_60px_rgba(0,0,0,0.6)]"
+        className="absolute inset-x-0 bottom-0 mx-auto flex max-h-[94dvh] max-w-xl flex-col overflow-hidden rounded-t-[28px] bg-[#161814] shadow-[0_-20px_60px_rgba(0,0,0,0.6)]"
         style={{
           transform: visible ? `translateY(${dragY}px)` : 'translateY(100%)',
           transition: start.current != null ? 'none' : 'transform 340ms cubic-bezier(0.32, 0.72, 0, 1)',
@@ -76,7 +76,7 @@ export function Sheet({ open, onClose, children, glow, title, subtitle, headerRi
       >
         {glow && (
           <div
-            className="pointer-events-none absolute inset-x-0 -top-24 h-64 opacity-60 transition-[background] duration-500"
+            className="pointer-events-none absolute inset-x-0 -top-24 h-56 opacity-30 transition-[background] duration-500"
             style={{ background: `radial-gradient(60% 70% at 50% 0%, ${glow}, transparent 70%)` }}
           />
         )}

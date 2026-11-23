@@ -3,16 +3,11 @@ import { lightRgb, rgba, rgbCss } from '../lib/color';
 import { setPower } from '../lib/store';
 import { KindIcon, PowerIcon } from './Icons';
 
-const KIND_LABEL: Record<Light['kind'], string> = { bulb: 'Λάμπα', strip: 'Ταινία LED', spot: 'Σποτ', plug: 'Πρίζα' };
-
+/** Μικρή, μίνιμαλ κάρτα (3 ανά σειρά). Πάτημα στο εικονίδιο: on/off · πάτημα στην κάρτα: έλεγχος. */
 export function LightCard({ light, onOpen }: { light: Light; onOpen: () => void }) {
   const rgb = lightRgb(light);
   const lit = light.on && light.online;
-  const level = light.caps.brightness ? light.brightness : 100;
-  // Η λάμψη της κάρτας ακολουθεί χρώμα και φωτεινότητα της λάμπας.
-  const glowAlpha = lit ? 0.18 + (level / 100) * 0.32 : 0;
-
-  const status = !light.online ? 'Εκτός σύνδεσης' : !light.on ? 'Σβηστή' : light.caps.brightness ? `${light.brightness}%` : 'Αναμμένη';
+  const status = !light.online ? 'Offline' : !light.on ? 'Σβηστή' : light.caps.brightness ? `${light.brightness}%` : 'Αναμμένη';
 
   return (
     <div
@@ -20,10 +15,9 @@ export function LightCard({ light, onOpen }: { light: Light; onOpen: () => void 
       tabIndex={0}
       onClick={onOpen}
       onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onOpen()}
-      className="group relative flex aspect-[1/0.78] flex-col justify-between overflow-hidden rounded-[22px] border p-3.5 text-left transition-[transform,border-color,background-color] duration-300 active:scale-[0.97]"
+      className="relative flex aspect-square flex-col justify-between overflow-hidden rounded-[18px] p-2.5 text-left transition-[transform,background-color] duration-300 active:scale-[0.96]"
       style={{
-        background: lit ? `radial-gradient(120% 90% at 20% 0%, ${rgba(rgb, glowAlpha)}, transparent 70%), #261f19` : '#221c17',
-        borderColor: lit ? rgba(rgb, 0.28) : 'rgba(243,234,221,0.06)',
+        background: lit ? `linear-gradient(160deg, ${rgba(rgb, 0.16)}, transparent 65%), #1c1e19` : '#181a16',
       }}
     >
       <div className="flex items-start justify-between">
@@ -34,35 +28,25 @@ export function LightCard({ light, onOpen }: { light: Light; onOpen: () => void 
           }}
           disabled={!light.online}
           aria-label={light.on ? `Σβήσιμο ${light.name}` : `Άναμμα ${light.name}`}
-          className="grid h-10 w-10 place-items-center rounded-full transition-all duration-300 active:scale-90 disabled:opacity-40"
+          className="grid h-8 w-8 place-items-center rounded-full transition-colors duration-300 active:scale-90 disabled:opacity-40"
           style={{
-            background: lit ? rgbCss(rgb) : 'rgba(243,234,221,0.07)',
-            color: lit ? 'rgba(28,22,17,0.75)' : 'rgba(243,234,221,0.6)',
-            boxShadow: lit ? `0 0 28px ${rgba(rgb, 0.55)}` : 'none',
+            background: lit ? rgbCss(rgb) : 'rgba(235,231,222,0.07)',
+            color: lit ? 'rgba(18,20,16,0.8)' : 'rgba(235,231,222,0.55)',
           }}
         >
-          {lit ? <KindIcon kind={light.kind} className="h-5 w-5" /> : <PowerIcon className="h-[18px] w-[18px]" />}
+          {lit ? <KindIcon kind={light.kind} className="h-4 w-4" /> : <PowerIcon className="h-[15px] w-[15px]" />}
         </button>
-        <span
-          className={`mt-1 h-2 w-2 rounded-full ${light.online ? 'bg-[#9aab7a]' : 'bg-[#d4735a]'}`}
-          title={light.online ? 'Συνδεδεμένη' : 'Εκτός σύνδεσης'}
-        />
+        {!light.online && <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#c9735c]" title="Εκτός σύνδεσης" />}
       </div>
-      <div>
-        <div className="truncate text-[15px] leading-tight font-semibold">{light.name}</div>
-        <div className="mt-0.5 truncate text-[12px] text-white/45">
-          {light.brand} · {KIND_LABEL[light.kind]}
-        </div>
-        <div className="mt-2 flex items-center gap-2">
-          <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/[0.08]">
-            <div
-              className="h-full rounded-full transition-all duration-500"
-              style={{ width: lit ? `${level}%` : '0%', background: rgbCss(rgb) }}
-            />
-          </div>
-          <span className={`text-[11px] font-medium tabular-nums ${light.online ? 'text-white/60' : 'text-[#e08a73]'}`}>{status}</span>
-        </div>
+      <div className="min-w-0">
+        <div className="truncate text-[13px] leading-tight font-semibold">{light.name}</div>
+        <div className={`mt-0.5 text-[11px] tabular-nums ${!light.online ? 'text-[#d38b77]' : lit ? 'text-white/65' : 'text-white/40'}`}>{status}</div>
       </div>
+      {lit && light.caps.brightness && (
+        <div className="absolute inset-x-0 bottom-0 h-[2px] bg-white/[0.05]">
+          <div className="h-full transition-all duration-500" style={{ width: `${light.brightness}%`, background: rgbCss(rgb) }} />
+        </div>
+      )}
     </div>
   );
 }

@@ -72,7 +72,7 @@ export function LightSheet({ ids, title, onClose }: { ids: string[] | null; titl
                   key={l.id}
                   className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] ${l.online ? 'bg-white/[0.07] text-white/80' : 'bg-white/[0.03] text-white/35 line-through'}`}
                 >
-                  <span className="h-2 w-2 rounded-full" style={{ background: l.on && l.online ? rgbCss(lightRgb(l)) : 'rgba(243,234,221,0.2)' }} />
+                  <span className="h-2 w-2 rounded-full" style={{ background: l.on && l.online ? rgbCss(lightRgb(l)) : 'rgba(235,231,222,0.2)' }} />
                   {l.name}
                 </span>
               ))}

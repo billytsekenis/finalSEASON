@@ -38,7 +38,7 @@ export function App() {
   return (
     <>
       {!online && (
-        <div className="fixed inset-x-0 top-0 z-[70] flex items-center justify-center gap-2 bg-[#3a2b1a]/95 px-4 pt-[max(8px,env(safe-area-inset-top))] pb-2 text-[13px] font-medium text-[#e8c79a] backdrop-blur">
+        <div className="fixed inset-x-0 top-0 z-[70] flex items-center justify-center gap-2 bg-[#2b2a1c]/95 px-4 pt-[max(8px,env(safe-area-inset-top))] pb-2 text-[13px] font-medium text-[#e8c79a] backdrop-blur">
           <WifiOffIcon className="h-4 w-4" /> Χωρίς σύνδεση στο internet — οι λάμπες δεν μπορούν να ελεγχθούν
         </div>
       )}

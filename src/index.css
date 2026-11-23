@@ -2,13 +2,13 @@
 
 /* Γήινη παλέτα: κρεμ αντί για λευκό, espresso αντί για μαύρο */
 @theme {
-  --color-white: #f3eadd;
-  --color-black: #1c1611;
+  --color-white: #ebe7de;
+  --color-black: #121410;
 }
 
 :root {
   color-scheme: dark;
-  --bg: #191410;
+  --bg: #111310;
 }
 
 html {
@@ -21,7 +21,7 @@ body {
   margin: 0;
   min-height: 100dvh;
   background: var(--bg);
-  color: #f3eadd;
+  color: #ebe7de;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;

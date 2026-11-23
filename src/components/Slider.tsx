@@ -28,7 +28,7 @@ export function Slider({
   onCommit,
   variant = 'fill',
   track,
-  fillColor = 'rgba(243,234,221,0.92)',
+  fillColor = 'rgba(235,231,222,0.92)',
   label,
   icon,
   format = (v) => `${Math.round(v)}`,
@@ -96,10 +96,10 @@ export function Slider({
         onPointerUp={onUp}
         onPointerCancel={onUp}
         onKeyDown={onKey}
-        className={`relative h-11 touch-none overflow-hidden rounded-[14px] select-none transition-transform duration-200 ${
+        className={`relative h-10 touch-none overflow-hidden rounded-[12px] select-none transition-transform duration-200 ${
           dragging ? 'scale-[1.015]' : ''
         }`}
-        style={{ background: track ?? 'rgba(243,234,221,0.07)' }}
+        style={{ background: track ?? 'rgba(235,231,222,0.07)' }}
       >
         {variant === 'fill' && (
           <div
@@ -114,7 +114,7 @@ export function Slider({
         )}
         {variant === 'thumb' && (
           <div
-            className="pointer-events-none absolute top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-white shadow-[0_2px_10px_rgba(0,0,0,0.45)]"
+            className="pointer-events-none absolute top-1/2 h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-white shadow-[0_2px_10px_rgba(0,0,0,0.45)]"
             style={{
               left: `clamp(18px, ${pct}%, calc(100% - 18px))`,
               background: fillColor,

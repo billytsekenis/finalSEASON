@@ -110,7 +110,7 @@ function SmartThingsCard({ connected, error, deviceCount }: { connected: boolean
       </div>
 
       {isPat && status?.expiresAt && (
-        <p className="mt-3 rounded-xl bg-[#c98a4b]/10 px-3 py-2 text-[13px] text-[#e8c79a]">
+        <p className="mt-3 rounded-xl bg-[#b08a5a]/10 px-3 py-2 text-[13px] text-[#e8c79a]">
           Το προσωρινό token λήγει {new Date(status.expiresAt).toLocaleString('el-GR', { weekday: 'short', hour: '2-digit', minute: '2-digit' })}. Κάνε
           μόνιμη σύνδεση παρακάτω.
         </p>
@@ -336,7 +336,7 @@ function XiaomiCard({ connected, error, deviceCount }: { connected: boolean; err
             ))}
           </select>
           {verifyUrl && (
-            <div className="space-y-2 rounded-2xl bg-[#c98a4b]/10 p-4 text-[14px] text-[#e8c79a]">
+            <div className="space-y-2 rounded-2xl bg-[#b08a5a]/10 p-4 text-[14px] text-[#e8c79a]">
               <p>Η Xiaomi ζητά επιβεβαίωση ταυτότητας (κωδικός σε email ή SMS).</p>
               <a href={verifyUrl} target="_blank" rel="noopener noreferrer" className="block rounded-xl bg-white py-3 text-center font-semibold text-black">
                 1. Επιβεβαίωση στη Xiaomi

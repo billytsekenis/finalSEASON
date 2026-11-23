@@ -244,7 +244,7 @@ function Swatches({
             key={c}
             onClick={() => onPick(c)}
             aria-label={`Χρώμα ${c}`}
-            className={`h-9 w-9 shrink-0 rounded-full transition active:scale-90 ${c === current ? 'ring-2 ring-white ring-offset-2 ring-offset-[#211b16]' : ''}`}
+            className={`h-9 w-9 shrink-0 rounded-full transition active:scale-90 ${c === current ? 'ring-2 ring-white ring-offset-2 ring-offset-[#161814]' : ''}`}
             style={{ background: c, boxShadow: `0 4px 14px ${c}55` }}
           />
         ))}
@@ -348,7 +348,7 @@ function ColorValues({
             spellCheck={false}
             enterKeyHint="done"
             aria-label="HEX"
-            className={`${input} font-mono tracking-wider ${bad ? 'ring-1 ring-[#d4735a]' : ''}`}
+            className={`${input} font-mono tracking-wider ${bad ? 'ring-1 ring-[#c9735c]' : ''}`}
           />
         )}
         {mode !== 'hex' &&

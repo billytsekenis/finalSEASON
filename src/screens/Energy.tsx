@@ -43,7 +43,7 @@ export function Energy({ onBack }: { onBack: () => void }) {
         <h1 className="text-[24px] font-bold tracking-tight">Ενέργεια</h1>
       </header>
 
-      {error && <p className="mt-4 rounded-2xl bg-[#d4735a]/10 px-4 py-3 text-[14px] text-[#e8957f]">{error}</p>}
+      {error && <p className="mt-4 rounded-2xl bg-[#c9735c]/10 px-4 py-3 text-[14px] text-[#e8957f]">{error}</p>}
       {!data && !error && (
         <div className="grid place-items-center py-32">
           <Spinner className="h-8 w-8" />
@@ -53,7 +53,7 @@ export function Energy({ onBack }: { onBack: () => void }) {
       {data && (
         <>
           {/* Hero: τρέχουσα ισχύς */}
-          <section className="mt-5 rounded-[24px] border border-white/[0.06] bg-[#221c17] p-5">
+          <section className="mt-5 rounded-[24px] border border-white/[0.06] bg-[#181a16] p-5">
             <p className="text-[13px] font-semibold tracking-wider text-white/45 uppercase">Τώρα</p>
             <p className="mt-1 text-[42px] leading-none font-bold tracking-tight tabular-nums">
               {fmtW(totalW)}

@@ -80,7 +80,7 @@ export function Button({
   const tones = {
     default: 'bg-white/[0.09] text-white',
     primary: 'bg-white text-black',
-    danger: 'bg-[#d4735a]/15 text-[#e08a73]',
+    danger: 'bg-[#c9735c]/15 text-[#e08a73]',
   };
   return (
     <button
@@ -103,7 +103,7 @@ export function ToastHost() {
           key={t.id}
           role="status"
           className={`animate-toast flex max-w-md items-center rounded-2xl px-4 py-3 text-center text-[14px] font-medium shadow-[0_10px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl ${
-            t.tone === 'error' ? 'bg-[#3b2219]/90 text-[#f0b8a6]' : 'bg-[#2f2720]/90 text-white'
+            t.tone === 'error' ? 'bg-[#2f1f1a]/90 text-[#f0b8a6]' : 'bg-[#24271f]/90 text-white'
           }`}
         >
           <span>{t.message}</span>
