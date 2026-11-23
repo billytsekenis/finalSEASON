@@ -64,7 +64,7 @@ function toLight(d: XmDevice, props: unknown[] | null): Light {
     model: d.model,
     kind: /strip|lightstrip/.test(d.model) ? 'strip' : 'bulb',
     room: null,
-    online: d.isOnline && props != null,
+    online: props != null,
     on: power === 'on',
     brightness: clamp(Number(bright) || 1, 1, 100),
     mode: colorMode === 2 ? 'white' : 'color',
@@ -85,18 +85,19 @@ export const xiaomi: LightProvider = {
 
   async list() {
     const devs = await devices();
+    const errors: string[] = [];
     const lights = await Promise.all(
       devs.map(async (d) => {
-        if (!d.isOnline) return toLight(d, null);
         try {
           return toLight(d, await rpc<unknown[]>(d.did, 'get_prop', [...PROPS]));
         } catch (e) {
           if (e instanceof ProviderError && e.code === 'auth') throw e;
+          errors.push(`${d.name}: ${e instanceof Error ? e.message : 'σφάλμα'}`);
           return toLight(d, null);
         }
       }),
     );
-    return { lights };
+    return { lights, warning: errors.length ? errors.join(' · ') : undefined };
   },
 
   async command(deviceIds, cmd: LightCommand) {

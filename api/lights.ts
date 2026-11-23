@@ -21,7 +21,7 @@ export const GET = route(async (req) => {
         const r = await p.list();
         lights.push(...r.lights);
         stale ||= !!r.stale;
-        statuses.push({ id: p.id, name: p.name, connected: true });
+        statuses.push({ id: p.id, name: p.name, connected: true, ...(r.warning ? { error: r.warning } : {}) });
       } catch (e) {
         const msg = e instanceof Error ? e.message : 'Σφάλμα';
         const connected = !(e instanceof ProviderError && (e.code === 'not_connected' || e.code === 'auth'));

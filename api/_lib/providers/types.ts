@@ -9,7 +9,7 @@ export interface LightProvider {
   name: string;
   isConnected(): Promise<boolean>;
   /** Επιστρέφει όλες τις λάμπες με την τρέχουσα κατάστασή τους. */
-  list(): Promise<{ lights: Light[]; stale?: boolean }>;
+  list(): Promise<{ lights: Light[]; stale?: boolean; warning?: string }>;
   /** Εκτελεί την ίδια εντολή σε πολλές συσκευές (deviceId χωρίς prefix provider). */
   command(deviceIds: string[], cmd: LightCommand): Promise<CommandResult[]>;
 }
