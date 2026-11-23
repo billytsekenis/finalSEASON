@@ -9,6 +9,8 @@ export function Settings({ onBack }: { onBack: () => void }) {
   const lights = useApp((s) => s.lights);
   const st = providers.find((p) => p.id === 'smartthings');
   const stCount = lights.filter((l) => l.provider === 'smartthings').length;
+  const xm = providers.find((p) => p.id === 'xiaomi');
+  const xmCount = lights.filter((l) => l.provider === 'xiaomi').length;
 
   return (
     <div className="mx-auto min-h-dvh max-w-2xl px-5 pt-[max(18px,env(safe-area-inset-top))] pb-[max(40px,env(safe-area-inset-bottom))]">
@@ -21,18 +23,7 @@ export function Settings({ onBack }: { onBack: () => void }) {
 
       <Section title="Συνδέσεις">
         <SmartThingsCard connected={!!st?.connected} error={st?.error} deviceCount={stCount} />
-        <div className="mt-3 rounded-[22px] bg-white/[0.04] p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-[17px] font-semibold">Yeelight / Xiaomi</div>
-              <div className="mt-0.5 text-[14px] text-white/45">Δεν έχει συνδεθεί ακόμα</div>
-            </div>
-            <span className="rounded-full bg-white/[0.07] px-3 py-1 text-[12px] font-semibold text-white/50">Επόμενο βήμα</span>
-          </div>
-          <p className="mt-3 text-[13px] leading-relaxed text-white/40">
-            Οι λάμπες Yeelight δεν εμφανίστηκαν στο SmartThings. Η σύνδεσή τους θα γίνει απευθείας μέσω του cloud της Xiaomi.
-          </p>
-        </div>
+        <XiaomiCard connected={!!xm?.connected} error={xm?.error} deviceCount={xmCount} />
       </Section>
 
       <Section title="Λογαριασμός">
@@ -178,6 +169,105 @@ function SmartThingsCard({ connected, error, deviceCount }: { connected: boolean
         </div>
       )}
       {err && <p className="mt-3 text-[13px] text-[#ff8a80]">{err}</p>}
+    </div>
+  );
+}
+
+const REGIONS = [
+  { v: 'de', label: 'Ευρώπη' },
+  { v: 'cn', label: 'Κίνα' },
+  { v: 'us', label: 'ΗΠΑ' },
+  { v: 'ru', label: 'Ρωσία' },
+  { v: 'sg', label: 'Σιγκαπούρη' },
+  { v: 'i2', label: 'Ινδία' },
+];
+
+function XiaomiCard({ connected, error, deviceCount }: { connected: boolean; error?: string; deviceCount: number }) {
+  const [open, setOpen] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [region, setRegion] = useState('de');
+  const [verifyUrl, setVerifyUrl] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+
+  const submit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    setErr('');
+    setBusy(true);
+    try {
+      const r = await api.xmLogin(username, password, region);
+      if (r.status === 'verify' && r.url) {
+        setVerifyUrl(r.url);
+      } else if (r.status === 'captcha') {
+        setErr('Η Xiaomi ζητά captcha. Περίμενε λίγα λεπτά και δοκίμασε ξανά.');
+      } else {
+        setOpen(false);
+        setVerifyUrl('');
+        setPassword('');
+        toast('Το Xiaomi συνδέθηκε');
+        await refreshLights();
+      }
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Σφάλμα');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const field = 'h-12 w-full rounded-2xl bg-white/[0.06] px-4 text-[16px] outline-none placeholder:text-white/30 focus:bg-white/[0.09]';
+
+  return (
+    <div className="mt-3 rounded-[22px] bg-white/[0.04] p-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-[17px] font-semibold">Xiaomi · Yeelight</div>
+          <div className="mt-0.5 text-[14px] text-white/45">{connected ? `${deviceCount} λάμπες` : 'Δεν έχει συνδεθεί'}</div>
+        </div>
+        {connected && (
+          <span className="flex items-center gap-1 rounded-full bg-[#34c759]/15 px-3 py-1 text-[12px] font-semibold text-[#5ee07f]">
+            <CheckIcon className="h-3.5 w-3.5" /> Ενεργό
+          </span>
+        )}
+      </div>
+      {error && <p className="mt-3 text-[13px] text-[#ff8a80]">{error}</p>}
+
+      {!open ? (
+        <Button tone={connected ? 'default' : 'primary'} className="mt-4 w-full" onClick={() => setOpen(true)}>
+          {connected ? 'Επανασύνδεση' : 'Σύνδεση λογαριασμού Xiaomi'}
+        </Button>
+      ) : (
+        <form onSubmit={submit} className="mt-4 space-y-3">
+          <p className="text-[13px] leading-relaxed text-white/50">
+            Ο λογαριασμός της εφαρμογής Xiaomi Home. Ο κωδικός χρησιμοποιείται μόνο για τη σύνδεση και δεν αποθηκεύεται πουθενά.
+          </p>
+          <input className={field} placeholder="Email, τηλέφωνο ή Xiaomi ID" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoCapitalize="off" autoCorrect="off" />
+          <input className={field} type="password" placeholder="Κωδικός Xiaomi" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+          <select className={field} value={region} onChange={(e) => setRegion(e.target.value)} aria-label="Περιοχή server">
+            {REGIONS.map((r) => (
+              <option key={r.v} value={r.v}>
+                Server: {r.label}
+              </option>
+            ))}
+          </select>
+          {verifyUrl && (
+            <div className="space-y-2 rounded-2xl bg-[#ff9f0a]/10 p-4 text-[14px] text-[#ffd18a]">
+              <p>Η Xiaomi ζητά επιβεβαίωση ταυτότητας (κωδικός σε email ή SMS).</p>
+              <a href={verifyUrl} target="_blank" rel="noopener noreferrer" className="block rounded-xl bg-white py-3 text-center font-semibold text-black">
+                1. Επιβεβαίωση στη Xiaomi
+              </a>
+              <p>2. Όταν ολοκληρωθεί, γύρνα εδώ και πάτα ξανά «Σύνδεση».</p>
+            </div>
+          )}
+          <Button type="submit" tone="primary" className="w-full" disabled={busy || !username || !password}>
+            {busy ? <Spinner /> : 'Σύνδεση'}
+          </Button>
+          <button type="button" onClick={() => setOpen(false)} className="w-full py-2 text-[14px] text-white/45">
+            Ακύρωση
+          </button>
+          {err && <p className="text-[13px] text-[#ff8a80]">{err}</p>}
+        </form>
+      )}
     </div>
   );
 }

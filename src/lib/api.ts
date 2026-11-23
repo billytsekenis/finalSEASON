@@ -42,4 +42,11 @@ export const api = {
   stComplete: (input: string) =>
     request<{ connected: boolean; kind: string }>('/api/connect/smartthings', { method: 'POST', body: JSON.stringify({ input }) }),
   stDisconnect: () => request('/api/connect/smartthings', { method: 'DELETE' }),
+  xmStatus: () => request<{ connected: boolean; region?: string; connectedAt?: number }>('/api/connect/xiaomi'),
+  xmLogin: (username: string, password: string, region: string) =>
+    request<{ status: 'connected' | 'verify' | 'captcha'; url?: string }>('/api/connect/xiaomi', {
+      method: 'POST',
+      body: JSON.stringify({ username, password, region }),
+    }),
+  xmDisconnect: () => request('/api/connect/xiaomi', { method: 'DELETE' }),
 };
