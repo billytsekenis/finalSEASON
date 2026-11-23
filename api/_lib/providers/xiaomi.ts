@@ -1,6 +1,6 @@
 import type { CommandResult, Light, LightCommand } from '../../../shared/types.js';
 import { getJson, setJson } from '../store.js';
-import { loadXiaomiAuth, xiaomiCall } from '../xiaomi-auth.js';
+import { ensureRegion, loadXiaomiAuth, xiaomiCall } from '../xiaomi-auth.js';
 import { ProviderError, clamp, type LightProvider } from './types.js';
 
 /**
@@ -23,6 +23,7 @@ const LIST_CACHE = 'xm:devices';
 const isLight = (m: string) => /^(yeelink|xiaomi|mijia|philips)\.(light|bhf_light)\./.test(m);
 
 async function devices(): Promise<XmDevice[]> {
+  await ensureRegion();
   const cached = await getJson<XmDevice[]>(LIST_CACHE);
   if (cached) return cached;
   const r = await xiaomiCall<{ list?: XmDevice[] }>('/home/device_list', {
@@ -110,14 +111,17 @@ export const xiaomi: LightProvider = {
             return { id, ok: true };
           }
           if (cmd.on === true) await rpc(did, 'set_power', ['on', 'smooth', SMOOTH_MS]);
+          // Χρώμα και φωτεινότητα παράλληλα, για πιο γρήγορη απόκριση.
+          const jobs: Promise<unknown>[] = [];
           if (cmd.color) {
-            await rpc(did, 'set_hsv', [Math.round(clamp(cmd.color.h, 0, 359)), Math.round(clamp(cmd.color.s, 0, 100)), 'smooth', SMOOTH_MS]);
+            jobs.push(rpc(did, 'set_hsv', [Math.round(clamp(cmd.color.h, 0, 359)), Math.round(clamp(cmd.color.s, 0, 100)), 'smooth', SMOOTH_MS]));
           } else if (cmd.colorTemp != null) {
-            await rpc(did, 'set_ct_abx', [Math.round(clamp(cmd.colorTemp, 1700, 6500)), 'smooth', SMOOTH_MS]);
+            jobs.push(rpc(did, 'set_ct_abx', [Math.round(clamp(cmd.colorTemp, 1700, 6500)), 'smooth', SMOOTH_MS]));
           }
           if (cmd.brightness != null) {
-            await rpc(did, 'set_bright', [Math.round(clamp(cmd.brightness, 1, 100)), 'smooth', SMOOTH_MS]);
+            jobs.push(rpc(did, 'set_bright', [Math.round(clamp(cmd.brightness, 1, 100)), 'smooth', SMOOTH_MS]));
           }
+          await Promise.all(jobs);
           return { id, ok: true };
         } catch (e) {
           return { id, ok: false, error: e instanceof Error ? e.message : 'Σφάλμα' };

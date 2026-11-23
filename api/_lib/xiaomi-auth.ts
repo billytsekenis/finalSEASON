@@ -23,6 +23,8 @@ export interface XiaomiAuth {
   region: XiaomiRegion;
   deviceId: string;
   connectedAt: number;
+  /** true όταν έχει εντοπιστεί αυτόματα ο server όπου είναι πραγματικά online οι συσκευές */
+  regionDetected?: boolean;
 }
 
 export async function loadXiaomiAuth(): Promise<XiaomiAuth | null> {
@@ -232,7 +234,7 @@ function encSignature(method: string, path: string, params: [string, string][], 
 }
 
 /** Καλεί ένα endpoint του Xiaomi Cloud, π.χ. `/home/device_list`. */
-export async function xiaomiCall<T>(path: string, data: unknown): Promise<T> {
+export async function xiaomiCall<T>(path: string, data: unknown, regionOverride?: XiaomiRegion): Promise<T> {
   const auth = await loadXiaomiAuth();
   if (!auth) throw new ProviderError('Το Xiaomi δεν έχει συνδεθεί', 'not_connected');
 
@@ -250,7 +252,7 @@ export async function xiaomiCall<T>(path: string, data: unknown): Promise<T> {
   params.push(['signature', encSignature('POST', path, params, signedNonce)]);
   params.push(['ssecurity', auth.ssecurity], ['_nonce', nonce]);
 
-  const res = await fetch(`${apiBase(auth.region)}${path}`, {
+  const res = await fetch(`${apiBase(regionOverride ?? auth.region)}${path}`, {
     method: 'POST',
     headers: {
       'User-Agent': UA,
@@ -287,4 +289,30 @@ export async function xiaomiCall<T>(path: string, data: unknown): Promise<T> {
   if (body.code === 3 || body.code === 2) throw new ProviderError('Η σύνδεση Xiaomi έληξε. Σύνδεσε ξανά το Xiaomi.', 'auth');
   if (body.code !== 0) throw new ProviderError(`Xiaomi: ${body.message ?? `κωδικός ${body.code}`}`);
   return body.result as T;
+}
+
+const ALL_REGIONS: XiaomiRegion[] = ['de', 'sg', 'us', 'ru', 'cn', 'i2'];
+
+/**
+ * Οι συσκευές μπορεί να υπάρχουν σε περισσότερους από έναν servers της Xiaomi (π.χ. παλιό αντίγραφο στην Ευρώπη
+ * και η πραγματική, online συσκευή στη Σιγκαπούρη). Διαλέγουμε τον server με τις περισσότερες online λάμπες.
+ */
+export async function ensureRegion(): Promise<XiaomiAuth | null> {
+  const auth = await loadXiaomiAuth();
+  if (!auth || auth.regionDetected) return auth;
+  const scores = await Promise.all(
+    ALL_REGIONS.map(async (r) => {
+      try {
+        const res = await xiaomiCall<{ list?: { model: string; isOnline: boolean }[] }>('/home/device_list', { getVirtualModel: false, getHuamiDevices: 0 }, r);
+        const lights = (res.list ?? []).filter((d) => /\.light\./.test(d.model));
+        return { r, score: lights.filter((d) => d.isOnline).length * 100 + lights.length };
+      } catch {
+        return { r, score: -1 };
+      }
+    }),
+  );
+  const best = scores.sort((a, b) => b.score - a.score)[0];
+  const next: XiaomiAuth = { ...auth, region: best && best.score > 0 ? best.r : auth.region, regionDetected: true };
+  await store().set(AUTH_KEY, encrypt(JSON.stringify(next)));
+  return next;
 }
