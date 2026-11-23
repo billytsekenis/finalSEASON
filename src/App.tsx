@@ -4,6 +4,7 @@ import { Spinner, ToastHost } from './components/ui';
 import { boot, useApp } from './lib/store';
 import { Home } from './screens/Home';
 import { Login } from './screens/Login';
+import { Energy } from './screens/Energy';
 import { Settings } from './screens/Settings';
 
 function useOnline() {
@@ -23,7 +24,7 @@ function useOnline() {
 
 export function App() {
   const phase = useApp((s) => s.phase);
-  const [screen, setScreen] = useState<'home' | 'settings'>('home');
+  const [screen, setScreen] = useState<'home' | 'settings' | 'energy'>('home');
   const online = useOnline();
 
   useEffect(() => {
@@ -47,13 +48,17 @@ export function App() {
         </div>
       ) : phase === 'login' ? (
         <Login />
+      ) : screen === 'energy' ? (
+        <div className="animate-in">
+          <Energy onBack={() => setScreen('home')} />
+        </div>
       ) : screen === 'settings' ? (
         <div className="animate-in">
           <Settings onBack={() => setScreen('home')} />
         </div>
       ) : (
         <div className="animate-in">
-          <Home onSettings={() => setScreen('settings')} />
+          <Home onSettings={() => setScreen('settings')} onEnergy={() => setScreen('energy')} />
         </div>
       )}
       <ToastHost />

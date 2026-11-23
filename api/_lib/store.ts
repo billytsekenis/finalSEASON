@@ -11,6 +11,7 @@ export interface Store {
   set(key: string, value: string, opts?: { ttlSec?: number; nx?: boolean }): Promise<boolean>;
   del(key: string): Promise<void>;
   incr(key: string, ttlSec: number): Promise<number>;
+  mget(keys: string[]): Promise<(string | null)[]>;
 }
 
 class UpstashStore implements Store {
@@ -44,6 +45,10 @@ class UpstashStore implements Store {
   }
   async del(key: string) {
     await this.cmd(['DEL', key]);
+  }
+  async mget(keys: string[]) {
+    if (!keys.length) return [];
+    return this.cmd<(string | null)[]>(['MGET', ...keys]);
   }
   async incr(key: string, ttlSec: number) {
     const n = await this.cmd<number>(['INCR', key]);
@@ -84,6 +89,10 @@ class FileStore implements Store {
     const d = await this.load();
     delete d[key];
     await this.save(d);
+  }
+  async mget(keys: string[]) {
+    const d = await this.load();
+    return keys.map((k) => d[k]?.v ?? null);
   }
   async incr(key: string, ttlSec: number) {
     const d = await this.load();

@@ -1,4 +1,4 @@
-import type { CommandAction, CommandResult, LightsResponse, UserData } from '../../shared/types';
+import type { CommandAction, CommandResult, EnergyResponse, LightsResponse, UserData } from '../../shared/types';
 
 export class ApiError extends Error {
   constructor(
@@ -36,6 +36,7 @@ export const api = {
   command: (actions: CommandAction[]) =>
     request<{ results: CommandResult[] }>('/api/command', { method: 'POST', body: JSON.stringify({ actions }) }),
   data: () => request<UserData>('/api/data'),
+  energy: () => request<EnergyResponse>('/api/energy'),
   saveData: (d: UserData) => request<UserData>('/api/data', { method: 'PUT', body: JSON.stringify(d) }),
   stStatus: () => request<{ connected: boolean; kind?: string; expiresAt?: number }>('/api/connect/smartthings'),
   stStart: () => request<{ authorizeUrl: string }>('/api/connect/smartthings?start=1'),

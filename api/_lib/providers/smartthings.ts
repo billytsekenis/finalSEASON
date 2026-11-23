@@ -105,7 +105,6 @@ function toLight(d: STDevice, rooms: Record<string, string>): Light {
 
   const health = attr(main, 'healthCheck', 'DeviceWatch-DeviceStatus')?.value;
   const switchVal = attr(main, 'switch', 'switch')?.value;
-  const online = health ? health === 'online' : switchVal != null;
 
   const level = Number(attr(main, 'switchLevel', 'level')?.value ?? 100);
   const hueAttr = attr(main, 'colorControl', 'hue');
@@ -123,8 +122,21 @@ function toLight(d: STDevice, rooms: Record<string, string>): Light {
   const mode: Light['mode'] =
     !supportsColor || (supportsCt && ct != null && ts(ctAttr) > Math.max(ts(hueAttr), ts(satAttr))) ? 'white' : 'color';
 
+  const pc = attr(main, 'powerConsumptionReport', 'powerConsumption')?.value as
+    | { energy?: number; deltaEnergy?: number; start?: string; end?: string }
+    | null
+    | undefined;
+  const meter =
+    pc && typeof pc.energy === 'number'
+      ? { totalWh: pc.energy, deltaWh: pc.deltaEnergy ?? 0, start: pc.start ?? '', end: pc.end ?? '' }
+      : null;
+
+  const meterFresh = !!meter?.end && Date.now() - Date.parse(meter.end) < 3 * 3600_000;
+  const online = health ? health === 'online' : switchVal != null || meterFresh;
+
   return {
     id: `smartthings:${d.deviceId}`,
+    meter,
     provider: 'smartthings',
     name: d.label || d.name || 'Λάμπα',
     brand,

@@ -20,7 +20,7 @@ function greeting() {
   return 'Καλησπέρα';
 }
 
-export function Home({ onSettings }: { onSettings: () => void }) {
+export function Home({ onSettings, onEnergy }: { onSettings: () => void; onEnergy: () => void }) {
   const lights = useApp((s) => s.lights);
   const loaded = useApp((s) => s.lightsLoaded);
   const error = useApp((s) => s.lightsError);
@@ -83,6 +83,9 @@ export function Home({ onSettings }: { onSettings: () => void }) {
           >
             {refreshing ? <Spinner className="h-4 w-4" /> : <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" /></svg>}
           </button>
+          <button onClick={onEnergy} className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-white/70 active:scale-95" aria-label="Ενέργεια">
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" /></svg>
+          </button>
           <button onClick={onSettings} className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-white/70 active:scale-95" aria-label="Ρυθμίσεις">
             <GearIcon className="h-5 w-5" />
           </button>
@@ -107,6 +110,9 @@ export function Home({ onSettings }: { onSettings: () => void }) {
           <p className="mx-auto mt-2 max-w-sm text-[15px] text-white/55">
             Χρειάζεται μία φορά σύνδεση με το SmartThings, όπου είναι ήδη οι λάμπες Tapo.
           </p>
+          <button onClick={onEnergy} className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-white/70 active:scale-95" aria-label="Ενέργεια">
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" /></svg>
+          </button>
           <button onClick={onSettings} className="mt-6 h-12 rounded-2xl bg-white px-6 text-[15px] font-semibold text-black active:scale-95">
             Σύνδεση
           </button>

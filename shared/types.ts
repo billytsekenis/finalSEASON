@@ -37,6 +37,8 @@ export interface Light {
   /** Kelvin */
   colorTemp: number | null;
   caps: LightCaps;
+  /** Πραγματικός μετρητής ενέργειας (π.χ. πρίζα P110), αν υπάρχει */
+  meter?: { totalWh: number; deltaWh: number; start: string; end: string } | null;
 }
 
 /** Εντολή προς μία ή περισσότερες λάμπες. Όλα τα πεδία είναι προαιρετικά. */
@@ -109,5 +111,37 @@ export interface UserData {
   groups: Group[];
   /** Αποθηκευμένα χρώματα σε HEX (#rrggbb) */
   favorites: string[];
+  /** Τιμή ρεύματος σε €/kWh */
+  kwhPrice?: number;
   updatedAt: number;
+}
+
+export interface EnergyMeterInfo {
+  id: string;
+  name: string;
+  model: string | null;
+  online: boolean;
+  on: boolean;
+  /** Μέση ισχύς στο τελευταίο διάστημα μέτρησης (W) */
+  watts: number | null;
+  totalKwh: number;
+  todayKwh: number | null;
+  days: { date: string; kwh: number }[];
+  measuredAt: string;
+}
+
+export interface EnergyEstimate {
+  id: string;
+  name: string;
+  brand: string;
+  model: string | null;
+  ratedW: number;
+  watts: number;
+}
+
+export interface EnergyResponse {
+  meters: EnergyMeterInfo[];
+  estimates: EnergyEstimate[];
+  estimatedTotalW: number;
+  kwhPrice: number;
 }

@@ -33,7 +33,8 @@ function sanitize(d: Partial<UserData>): UserData {
   const favorites = (Array.isArray(d.favorites) ? d.favorites : [])
     .filter((c): c is string => typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c))
     .slice(0, 48);
-  return { scenes, groups, favorites, updatedAt: Date.now() };
+  const kwhPrice = typeof d.kwhPrice === 'number' && d.kwhPrice > 0 && d.kwhPrice < 5 ? d.kwhPrice : undefined;
+  return { scenes, groups, favorites, kwhPrice, updatedAt: Date.now() };
 }
 
 /** Σκηνές, ομάδες και αγαπημένα χρώματα. Αποθηκεύονται στον server ώστε να μένουν σε κάθε συσκευή. */
