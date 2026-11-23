@@ -116,32 +116,26 @@ export interface UserData {
   updatedAt: number;
 }
 
-export interface EnergyMeterInfo {
-  id: string;
-  name: string;
-  model: string | null;
-  online: boolean;
-  on: boolean;
-  /** Μέση ισχύς στο τελευταίο διάστημα μέτρησης (W) */
-  watts: number | null;
-  totalKwh: number;
-  todayKwh: number | null;
-  days: { date: string; kwh: number }[];
-  measuredAt: string;
-}
-
-export interface EnergyEstimate {
+export interface EnergyDevice {
   id: string;
   name: string;
   brand: string;
   model: string | null;
-  ratedW: number;
-  watts: number;
+  /** meter = πραγματική μέτρηση, estimate = εκτίμηση */
+  source: 'meter' | 'estimate';
+  online: boolean;
+  nowW: number;
+  ratedW: number | null;
+  kwh: { today: number; d7: number; d30: number; all: number };
+  /** Τελευταίες 30 ημέρες */
+  days: { date: string; kwh: number }[];
+  trackedSince: string;
+  lifetimeLabel: string;
 }
 
 export interface EnergyResponse {
-  meters: EnergyMeterInfo[];
-  estimates: EnergyEstimate[];
-  estimatedTotalW: number;
+  devices: EnergyDevice[];
+  nowW: number;
   kwhPrice: number;
+  trackingSince: string;
 }

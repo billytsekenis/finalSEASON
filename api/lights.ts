@@ -3,6 +3,7 @@ import { requireAuth } from './_lib/auth.js';
 import { json, route } from './_lib/http.js';
 import { providers } from './_lib/providers/registry.js';
 import { ProviderError } from './_lib/providers/types.js';
+import { accumulate } from './_lib/energy.js';
 
 /** Όλες οι λάμπες από όλους τους συνδεδεμένους providers, σε κοινή μορφή. */
 export const GET = route(async (req) => {
@@ -29,6 +30,9 @@ export const GET = route(async (req) => {
       }
     }),
   );
+
+  // Καταγραφή εκτιμώμενης κατανάλωσης (δεν επηρεάζει την απάντηση αν αποτύχει).
+  await accumulate(lights).catch(() => {});
 
   lights.sort((a, b) => a.name.localeCompare(b.name, 'el', { numeric: true }));
   const body: LightsResponse = { lights, providers: statuses, stale, fetchedAt: Date.now() };

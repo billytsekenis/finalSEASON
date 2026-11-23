@@ -1,4 +1,4 @@
-import type { EnergyResponse, Light } from '../shared/types.js';
+import type { Light } from '../shared/types.js';
 import { requireAuth } from './_lib/auth.js';
 import { buildEnergy } from './_lib/energy.js';
 import { json, route } from './_lib/http.js';
@@ -17,6 +17,5 @@ export const GET = route(async (req) => {
       }
     }),
   );
-  const body: EnergyResponse = await buildEnergy(lights);
-  return json(body);
+  return json(await buildEnergy(lights));
 });

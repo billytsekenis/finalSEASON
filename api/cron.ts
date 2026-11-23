@@ -1,7 +1,8 @@
 import { env } from './_lib/env.js';
 import { json, route } from './_lib/http.js';
 import { accessToken, authStatus } from './_lib/smartthings-auth.js';
-import { snapshotMeters } from './_lib/energy.js';
+import { accumulate, snapshotMeters } from './_lib/energy.js';
+import { providers } from './_lib/providers/registry.js';
 import { smartthings } from './_lib/providers/smartthings.js';
 
 /**
@@ -24,5 +25,10 @@ export const GET = route(async (req) => {
     await snapshotMeters(lights);
     metered = lights.filter((l) => l.meter).length;
   }
+  // Ημερήσια παρατήρηση όλων των λαμπών για την εκτίμηση κατανάλωσης.
+  const all = (
+    await Promise.all(providers.map(async (p) => ((await p.isConnected().catch(() => false)) ? (await p.list().catch(() => ({ lights: [] }))).lights : [])))
+  ).flat();
+  await accumulate(all).catch(() => {});
   return json({ refreshed, metered });
 });
