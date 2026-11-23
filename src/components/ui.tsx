@@ -102,11 +102,16 @@ export function ToastHost() {
         <div
           key={t.id}
           role="status"
-          className={`animate-toast max-w-md rounded-2xl px-4 py-3 text-center text-[14px] font-medium shadow-[0_10px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl ${
+          className={`animate-toast flex max-w-md items-center rounded-2xl px-4 py-3 text-center text-[14px] font-medium shadow-[0_10px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl ${
             t.tone === 'error' ? 'bg-[#3a1614]/90 text-[#ffb4ae]' : 'bg-[#2a2a2e]/90 text-white'
           }`}
         >
-          {t.message}
+          <span>{t.message}</span>
+          {t.action && (
+            <button onClick={t.action.run} className="pointer-events-auto ml-3 rounded-full bg-white/15 px-3 py-1 text-[13px] font-semibold text-white active:scale-95">
+              {t.action.label}
+            </button>
+          )}
         </div>
       )}
     </div>

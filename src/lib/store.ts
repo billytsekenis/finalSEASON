@@ -7,6 +7,7 @@ export interface Toast {
   id: number;
   message: string;
   tone: 'info' | 'error';
+  action?: { label: string; run: () => void };
 }
 
 export interface AppState {
@@ -54,10 +55,15 @@ export const getState = () => state;
 
 // ───────────────────────── Toasts ─────────────────────────
 let toastTimer: ReturnType<typeof setTimeout> | null = null;
-export function toast(message: string, tone: Toast['tone'] = 'info', ms = 3200) {
+export function toast(message: string, tone: Toast['tone'] = 'info', ms = 3200, action?: Toast['action']) {
   if (toastTimer) clearTimeout(toastTimer);
-  set({ toast: { id: Date.now(), message, tone } });
+  set({ toast: { id: Date.now(), message, tone, action } });
   toastTimer = setTimeout(() => set({ toast: null }), ms);
+}
+
+export function dismissToast() {
+  if (toastTimer) clearTimeout(toastTimer);
+  set({ toast: null });
 }
 
 // ───────────────────────── Optimistic updates ─────────────────────────
@@ -281,3 +287,85 @@ export function pushRecent(hex: string) {
 }
 
 export const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+
+// ───────────────────────── Αναίρεση ─────────────────────────
+/** Φωτογραφίζει την κατάσταση λαμπών ώστε να μπορεί να επαναφερθεί. */
+export function snapshot(ids: string[]): CommandAction[] {
+  return state.lights
+    .filter((l) => ids.includes(l.id) && l.online)
+    .map((l) => ({
+      ids: [l.id],
+      cmd: !l.on
+        ? { on: false }
+        : {
+            on: true,
+            ...(l.caps.brightness ? { brightness: l.brightness } : {}),
+            ...(l.mode === 'color' && l.caps.color
+              ? { color: { h: l.hue, s: l.saturation } }
+              : l.caps.colorTemp && l.colorTemp
+                ? { colorTemp: l.colorTemp }
+                : {}),
+          },
+    }));
+}
+
+/** Εμφανίζει μήνυμα με κουμπί «Αναίρεση» που επαναφέρει την κατάσταση πριν από την αλλαγή. */
+export function offerUndo(message: string, before: CommandAction[]) {
+  if (!before.length) return toast(message);
+  toast(message, 'info', 7000, {
+    label: 'Αναίρεση',
+    run: () => {
+      dismissToast();
+      void runActions(before).then((ok) => ok && toast('Επαναφέρθηκε'));
+    },
+  });
+}
+
+// ───────────────────────── Ομαδικός έλεγχος ─────────────────────────
+let dimBase: { ids: string[]; base: Map<string, number>; ref: number; before: CommandAction[] } | null = null;
+
+/** Μέση φωτεινότητα των αναμμένων λαμπών (για τον συνολικό slider). */
+export function averageBrightness(ids: string[]): number {
+  const on = state.lights.filter((l) => ids.includes(l.id) && l.on && l.online && l.caps.brightness);
+  if (!on.length) return 0;
+  return Math.round(on.reduce((s, l) => s + l.brightness, 0) / on.length);
+}
+
+/**
+ * Αναλογική αλλαγή έντασης: κάθε λάμπα κρατά τη σχέση της με τις άλλες (π.χ. σε μια σκηνή).
+ * value = νέα «μέση» ένταση. final = ο χρήστης άφησε τον slider.
+ */
+export function scaleBrightness(ids: string[], value: number, final: boolean) {
+  if (!dimBase || dimBase.ids.join() !== ids.join()) {
+    const on = state.lights.filter((l) => ids.includes(l.id) && l.on && l.online && l.caps.brightness);
+    dimBase = {
+      ids,
+      base: new Map(on.map((l) => [l.id, l.brightness])),
+      ref: Math.max(1, averageBrightness(ids)),
+      before: snapshot(on.map((l) => l.id)),
+    };
+  }
+  const factor = value / dimBase.ref;
+  for (const [id, b] of dimBase.base) {
+    const nb = Math.max(1, Math.min(100, Math.round(value >= 100 ? 100 : b * factor)));
+    control([id], { brightness: nb }, final);
+  }
+  if (final) {
+    const before = dimBase.before;
+    dimBase = null;
+    offerUndo(`Ένταση ${Math.round(value)}%`, before);
+  }
+}
+
+/** Ίδιο «λευκό» σε όλα· οι Yeelight παίρνουν λίγο ζεστότερη τιμή για να ταιριάζουν οπτικά με τις Tapo. */
+export function setWhiteAll(ids: string[], kelvin: number, label: string) {
+  const targets = state.lights.filter((l) => ids.includes(l.id) && l.online && l.caps.colorTemp);
+  if (!targets.length) return toast('Καμία διαθέσιμη λάμπα', 'error');
+  const before = snapshot(targets.map((l) => l.id));
+  const actions: CommandAction[] = targets.map((l) => {
+    const k = l.provider === 'xiaomi' ? kelvin - 350 : kelvin;
+    const ct = Math.max(l.caps.colorTemp!.min, Math.min(l.caps.colorTemp!.max, k));
+    return { ids: [l.id], cmd: { on: true, colorTemp: ct } };
+  });
+  void runActions(actions).then((ok) => ok && offerUndo(`Όλα σε «${label}»`, before));
+}

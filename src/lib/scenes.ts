@@ -1,6 +1,6 @@
 import type { CommandAction, Light, Scene, SceneEntry } from '../../shared/types';
 import { hsvToRgb, kelvinToRgb, rgbCss } from './color';
-import { runActions, toast } from './store';
+import { offerUndo, runActions, snapshot, toast } from './store';
 
 export function entryColor(e: SceneEntry): string {
   if (!e.on) return 'rgb(40,40,44)';
@@ -57,8 +57,9 @@ export async function applyScene(scene: Scene, lights: Light[]) {
     toast('Η σκηνή δεν περιέχει διαθέσιμες λάμπες', 'error');
     return;
   }
+  const before = snapshot(actions.flatMap((a) => a.ids));
   const ok = await runActions(actions);
-  if (ok) toast(`«${scene.name}» ενεργοποιήθηκε`);
+  if (ok) offerUndo(`«${scene.name}» ενεργοποιήθηκε`, before);
 }
 
 type Tpl = (i: number, l: Light) => Omit<SceneEntry, 'lightId'>;
